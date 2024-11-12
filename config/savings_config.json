@@ -1,0 +1,26 @@
+{
+  "savings": {
+    "genset": {
+      "fuel_cost_per_liter": 0,
+      "maintenance_cost_per_hour": 0,
+      "operating_hours_per_day": 0
+    },
+    "solar": {
+      "installation_cost": 0,
+      "maintenance_cost_per_year": 0,
+      "lifespan_years": 0
+    },
+    "battery": {
+      "installation_cost": 0,
+      "maintenance_cost_per_year": 0,
+      "lifespan_years": 0
+    }
+  },
+  "currency": "USD",
+  "country": "Kenya",
+  "year": 2024,
+  "calculation_parameters": {
+    "discount_rate": 0,
+    "inflation_rate": 0
+  }
+}
