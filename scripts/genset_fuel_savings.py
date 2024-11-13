@@ -73,6 +73,22 @@ class CalculateGensetSavings:
       refined_csv[month] = month_data
     return refined_csv
 
+  def calculate_total_kWh(self) -> Dict[str, List[List[str]]]:
+    """Calculate the total kWh for each month."""
+    refined_csv = {}
+    for month in self.months_list:
+      month_data = []
+      headers = self.refined_data[month][0]
+      if "Total kWh" in headers:
+        total_kWh_index = headers.index("Total kWh")
+        month_data.append(headers)
+        total_kWh = 0
+        for row in self.refined_data[month][1:]:
+          total_kWh += float(row[total_kWh_index])
+        month_data.append([total_kWh])
+      refined_csv[month] = month_data
+    return refined_csv
+
   def calculate_genset_savings(self) -> None:
     """Calculate genset savings."""
     pass
