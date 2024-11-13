@@ -89,6 +89,33 @@ class CalculateGensetSavings:
     print(f"Created XLSX file: {file_name}\n\n")
     summary_sheet = workbook.add_worksheet("Summary")
 
+    solar_yield_file = Path(f"{year}/Solar-Energy-Yield-Month.csv")
+    if not solar_yield_file.exists():
+      print(f"Solar-Energy-Yield-Month.csv does not exist. Exiting.\n\n")
+      sys.exit()
+    with open(solar_yield_file, mode='r', newline='') as infile:
+      reader = csv.DictReader(infile)
+      if 'Category' not in reader.fieldnames or 'Solar Energy Yield Month' not in reader.fieldnames:
+        print(f"Required columns not found in {solar_yield_file}. Exiting.\n\n")
+        sys.exit()
+      solar_yield_data = {row["Category"]: row["Solar Energy Yield Month"] for row in reader}
+
+    genset_grid_yield_file = Path(f"{year}/Genset-and-Grid-Yield.csv")
+    if not genset_grid_yield_file.exists():
+      print(f"Genset-and-Grid-Yield.csv does not exist. Exiting.\n\n")
+      sys.exit()
+    with open(genset_grid_yield_file, mode='r', newline='') as infile:
+      reader = csv.DictReader(infile)
+      if 'Category' not in reader.fieldnames or 'Grid Energy Yield Month' not in reader.fieldnames:
+        print(f"Required columns not found in {genset_grid_yield_file}. Exiting.\n\n")
+        sys.exit()
+      genset_grid_yield_data = {}
+      for row in reader:
+        if 'Genset Energy Yield Month' in row:
+          genset_grid_yield_data[row["Category"]] = (row["Grid Energy Yield Month"], row["Genset Energy Yield Month"])
+        else:
+          genset_grid_yield_data[row["Category"]] = (row["Grid Energy Yield Month"], "N/A")
+
     for month in self.months_list:
       worksheet = workbook.add_worksheet(f"{site}_{month}_Savings")
       file_path = Path(f"{year}/{month}-Genset-Savings.csv")
@@ -128,6 +155,12 @@ class CalculateGensetSavings:
       worksheet.write(row_idx + 4, 1, genset_fuel_savings)
       worksheet.write(row_idx + 5, 0, "Outage Savings")
       worksheet.write(row_idx + 5, 1, outage_savings)
+      worksheet.write(row_idx + 7, 0, "Solar Yield")
+      worksheet.write(row_idx + 7, 1, solar_yield_data.get(month, "N/A"))
+      worksheet.write(row_idx + 8, 0, "Grid Yield")
+      worksheet.write(row_idx + 8, 1, genset_grid_yield_data.get(month, ("N/A", "N/A"))[0])
+      worksheet.write(row_idx + 9, 0, "Genset Yield")
+      worksheet.write(row_idx + 9, 1, genset_grid_yield_data.get(month, ("N/A", "N/A"))[1])
 
       for col_idx, col_name in enumerate(reader[0]):
         max_len = max(len(str(cell)) for cell in [col_name] + [row[col_idx] for row in reader[1:]])
@@ -140,4 +173,5 @@ if __name__ == "__main__":
   genset_savings = CalculateGensetSavings(config_file)
   genset_savings.confirm_year_folder()
   genset_savings.clean_month_csv_files()
+  genset_savings.remove_short_time_entries()
   genset_savings.calculate_genset_savings()
