@@ -34,14 +34,6 @@ class CalculateGensetSavings:
       sys.exit()
     print(f"Year {self.config['year']} folder exists.\n\n")
 
-  def check_month_file(self, month: str) -> None:
-    """Check if the month file exists."""
-    file_path = Path(f"{self.config['year']}/{month}-Genset-Savings.csv")
-    if not file_path.exists():
-      print(f"File {month}-Genset-Savings.csv does not exist. Exiting.\n\n")
-      sys.exit()
-    print(f"File {month}-Genset-Savings.csv exists.\n\n")
-
   def refine_month_data(self) -> Dict[str, List[List[str]]]:
     """Check data for each month from CSV files and refine it."""
     refined_data = {}
