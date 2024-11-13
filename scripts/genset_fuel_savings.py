@@ -34,8 +34,8 @@ class CalculateGensetSavings:
       sys.exit()
     print(f"Year {self.config['year']} folder exists.\n\n")
 
-  def remove_conditions_met_column(self) -> None:
-    """Remove the 'Conditions Met' column from the CSV file."""
+  def clean_month_csv_files(self) -> None:
+    """Remove the 'Conditions Met' column and remove previously calculated savings from the CSV file."""
     refined_data = {}
     for month in self.months_list:
       refined_month_data = []
@@ -79,25 +79,64 @@ class CalculateGensetSavings:
         writer.writerows(filtered_data)
       print(f"Removed rows with 'Time Elapsed (minutes)' < 1 from {file_path}.\n\n")
 
-  def create_results_xlsx_file(self) -> None:
-    """Create an XLSX file to save the results of the calculation."""
+  def calculate_genset_savings(self) -> None:
+    """Copy CSV data of each month into the XLSX file and calculate savings."""
     year = self.config["year"]
     site = self.config["site"]
     file_name = f"{year}_Genset_Fuel_Savings_{site}.xlsx"
     workbook = xlsxwriter.Workbook(file_name)
-    summary_sheet = workbook.add_worksheet("Summary")
-    for month in self.months_list:
-      worksheet = workbook.add_worksheet(f"{month}_Analysis")
-    workbook.close()
     print(f"Created XLSX file: {file_name}\n\n")
+    summary_sheet = workbook.add_worksheet("Summary")
 
-  def calculate_genset_savings(self) -> None:
-    """Calculate genset savings."""
-    pass
+    for month in self.months_list:
+      worksheet = workbook.add_worksheet(f"{site}_{month}_Savings")
+      file_path = Path(f"{year}/{month}-Genset-Savings.csv")
+      if not file_path.exists():
+        print(f"{month}-Genset-Savings.csv does not exist. Skipping.\n\n")
+        continue
+      with open(file_path, mode='r', newline='') as infile:
+        reader = list(csv.reader(infile))
+        for row_idx, row in enumerate(reader):
+          for col_idx, cell in enumerate(row):
+            worksheet.write(row_idx, col_idx, cell)
+      print(f"Copied data from {file_path} to {file_name} in sheet {site}_{month}_Savings.\n\n")
+      # Calculate total kWh Saved
+      energy_saving_col_idx = None
+      for col_idx, col_name in enumerate(reader[0]):
+        if col_name == "Energy Saving (kWh)":
+          energy_saving_col_idx = col_idx
+          break
+      if energy_saving_col_idx is None:
+        print(f"Energy Saving (kWh) column not found in {file_path}. Skipping calculations.\n\n")
+        continue
+      total_kwh_saved = sum(float(row[energy_saving_col_idx]) for row in reader[1:] if row[energy_saving_col_idx])
+      # Calculate number of outages
+      num_outages = len([row for row in reader[1:] if row[energy_saving_col_idx]]) - 1
+      # Calculate genset fuel savings
+      fuel_plus_mtce_cost = self.config["fuel_plus_MTCE_cost"]
+      genset_fuel_savings = total_kwh_saved * fuel_plus_mtce_cost
+      # Calculate outage savings
+      cost_per_outage = self.config["cost_per_outage"]
+      outage_savings = num_outages * cost_per_outage
+      # Write calculations to the worksheet
+      worksheet.write(row_idx + 2, 0, "Total kWh Saved")
+      worksheet.write(row_idx + 2, 1, total_kwh_saved)
+      worksheet.write(row_idx + 3, 0, "Number of Outages")
+      worksheet.write(row_idx + 3, 1, num_outages)
+      worksheet.write(row_idx + 4, 0, "Genset Fuel Savings")
+      worksheet.write(row_idx + 4, 1, genset_fuel_savings)
+      worksheet.write(row_idx + 5, 0, "Outage Savings")
+      worksheet.write(row_idx + 5, 1, outage_savings)
+
+      for col_idx, col_name in enumerate(reader[0]):
+        max_len = max(len(str(cell)) for cell in [col_name] + [row[col_idx] for row in reader[1:]])
+        worksheet.set_column(col_idx, col_idx, max_len + 2)
+    workbook.close()
+    print(f"Completed calculating genset savings and writing: {file_name}\n\n")
 
 if __name__ == "__main__":
   config_file = "config/savings_config.json"
   genset_savings = CalculateGensetSavings(config_file)
   genset_savings.confirm_year_folder()
-  genset_savings.remove_conditions_met_column()
-  genset_savings.create_results_xlsx_file()
+  genset_savings.clean_month_csv_files()
+  genset_savings.calculate_genset_savings()
