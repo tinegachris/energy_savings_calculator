@@ -18,6 +18,7 @@
   },
   "currency": "USD",
   "country": "KE",
+  "site": "MVT",
   "year": 2024,
   "calculation_parameters": {
     "discount_rate": 0,
