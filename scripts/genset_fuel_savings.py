@@ -8,11 +8,14 @@ class CalculateGensetSavings:
   def __init__(self, config_file: str):
     self.config_file = config_file
     self.config = self.load_config()
+    # self.months_list = [
+    #   "January", "February", "March", "April", "May", "June",
+    #   "July", "August", "September", "October", "November", "December"
+    # ]
     self.months_list = [
-      "January", "February", "March", "April", "May", "June",
-      "July", "August", "September", "October", "November", "December"
+      "January", "February", "March", "April", "May"
     ]
-    self.refined_data = self.refine_month_data()
+
 
   def load_config(self) -> Dict:
     """Load configuration from a JSON file."""
@@ -40,8 +43,7 @@ class CalculateGensetSavings:
     for month in self.months_list:
       file_path = Path(f"{self.config['year']}/{month}-Genset-Savings.csv")
       if not file_path.exists():
-        print(f"File {month}-Genset-Savings.csv does not exist. Exiting.\n\n")
-        sys.exit()
+        print(f"File {month}-Genset-Savings.csv does not exist.\n\n")
       month_data = []
       with open(file_path, newline='') as f:
         reader = csv.reader(f)
@@ -94,7 +96,8 @@ class CalculateGensetSavings:
     pass
 
 if __name__ == "__main__":
-  config_file = "config\savings_config.json"
+  config_file = "config/savings_config.json"
   genset_savings = CalculateGensetSavings(config_file)
   genset_savings.confirm_year_folder()
+  genset_savings.rm_conditions_met()
   genset_savings.calculate_genset_savings()
