@@ -35,7 +35,7 @@ class CalculateGensetSavings:
     print(f"Year {self.config['year']} folder exists.\n\n")
 
   def clean_month_csv_files(self) -> None:
-    """Remove the 'Conditions Met' column and remove previously calculated savings from the CSV file."""
+    """Remove the 'Conditions Met' column, remove previously calculated savings, and remove empty rows from the CSV file."""
     refined_data = {}
     for month in self.months_list:
       refined_month_data = []
@@ -47,8 +47,9 @@ class CalculateGensetSavings:
         reader = csv.DictReader(infile)
         fieldnames = [field for field in reader.fieldnames if field != "Conditions Met"]
         for row in reader:
-          refined_row = {field: row[field] for field in fieldnames}
-          refined_month_data.append(refined_row)
+          if any(row.values()) and "Total savings" not in row.values():
+            refined_row = {field: row[field] for field in fieldnames}
+            refined_month_data.append(refined_row)
       refined_data[month] = refined_month_data
 
     for month, data in refined_data.items():
@@ -57,7 +58,7 @@ class CalculateGensetSavings:
         writer = csv.DictWriter(outfile, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(data)
-      print(f"Removed 'Conditions Met' column from {file_path}.\n\n")
+      print(f"Removed 'Conditions Met' column and empty rows from {file_path}.\n\n")
 
   def remove_short_time_entries(self) -> None:
     """Remove rows with 'Time Elapsed (minutes)' less than 1 from the CSV files."""
