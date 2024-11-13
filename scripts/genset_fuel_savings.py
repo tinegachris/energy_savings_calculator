@@ -8,14 +8,10 @@ class CalculateGensetSavings:
   def __init__(self, config_file: str):
     self.config_file = config_file
     self.config = self.load_config()
-    # self.months_list = [
-    #   "January", "February", "March", "April", "May", "June",
-    #   "July", "August", "September", "October", "November", "December"
-    # ]
     self.months_list = [
-      "January", "February", "March", "April", "May"
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
     ]
-
 
   def load_config(self) -> Dict:
     """Load configuration from a JSON file."""
@@ -37,59 +33,30 @@ class CalculateGensetSavings:
       sys.exit()
     print(f"Year {self.config['year']} folder exists.\n\n")
 
-  def rm_conditions_met(self) -> Dict[str, List[List[str]]]:
-    """Remove the 'Conditions Met' column from the data."""
-    refined_csv = {}
+  def remove_conditions_met_column(self) -> None:
+    """Remove the 'Conditions Met' column from the CSV file."""
+    refined_data = {}
     for month in self.months_list:
+      refined_month_data = []
       file_path = Path(f"{self.config['year']}/{month}-Genset-Savings.csv")
       if not file_path.exists():
-        print(f"File {month}-Genset-Savings.csv does not exist.\n\n")
-      month_data = []
-      with open(file_path, newline='') as f:
-        reader = csv.reader(f)
-        headers = next(reader)
-        if "Conditions Met" in headers:
-          conditions_met_index = headers.index("Conditions Met")
-          headers.pop(conditions_met_index)
-        month_data.append(headers)
+        print(f"{month}-Genset-Savings.csv does not exist.\n\n")
+        continue
+      with open(file_path, mode='r', newline='') as infile:
+        reader = csv.DictReader(infile)
+        fieldnames = [field for field in reader.fieldnames if field != "Conditions Met"]
         for row in reader:
-          if "Conditions Met" in headers:
-            row.pop(conditions_met_index)
-          month_data.append(row)
-      refined_csv[month] = month_data
-      print(f"Processed {file_path}.\n\n")
-    return refined_csv
+          refined_row = {field: row[field] for field in fieldnames}
+          refined_month_data.append(refined_row)
+      refined_data[month] = refined_month_data
 
-  def refine_time_elapsed(self) -> Dict[str, List[List[str]]]:
-    """Remove rows where the 'Time Elapsed (Minutes)' column has values less than 1."""
-    refined_csv = {}
-    for month in self.months_list:
-      month_data = []
-      headers = self.refined_data[month][0]
-      if "Time Elapsed (Minutes)" in headers:
-        time_elapsed_index = headers.index("Time Elapsed (Minutes)")
-        month_data.append(headers)
-        for row in self.refined_data[month][1:]:
-          if float(row[time_elapsed_index]) >= 1:
-            month_data.append(row)
-      refined_csv[month] = month_data
-    return refined_csv
-
-  def calculate_total_kWh(self) -> Dict[str, List[List[str]]]:
-    """Calculate the total kWh for each month."""
-    refined_csv = {}
-    for month in self.months_list:
-      month_data = []
-      headers = self.refined_data[month][0]
-      if "Total kWh" in headers:
-        total_kWh_index = headers.index("Total kWh")
-        month_data.append(headers)
-        total_kWh = 0
-        for row in self.refined_data[month][1:]:
-          total_kWh += float(row[total_kWh_index])
-        month_data.append([total_kWh])
-      refined_csv[month] = month_data
-    return refined_csv
+    for month, data in refined_data.items():
+      file_path = Path(f"{self.config['year']}/{month}-Genset-Savings.csv")
+      with open(file_path, mode='w', newline='') as outfile:
+        writer = csv.DictWriter(outfile, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(data)
+      print(f"Removed 'Conditions Met' column from {file_path}.\n\n")
 
   def calculate_genset_savings(self) -> None:
     """Calculate genset savings."""
@@ -99,5 +66,4 @@ if __name__ == "__main__":
   config_file = "config/savings_config.json"
   genset_savings = CalculateGensetSavings(config_file)
   genset_savings.confirm_year_folder()
-  genset_savings.rm_conditions_met()
-  genset_savings.calculate_genset_savings()
+  genset_savings.remove_conditions_met_column()
