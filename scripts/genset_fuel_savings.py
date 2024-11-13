@@ -34,9 +34,9 @@ class CalculateGensetSavings:
       sys.exit()
     print(f"Year {self.config['year']} folder exists.\n\n")
 
-  def refine_month_data(self) -> Dict[str, List[List[str]]]:
-    """Check data for each month from CSV files and refine it."""
-    refined_data = {}
+  def rm_conditions_met(self) -> Dict[str, List[List[str]]]:
+    """Remove the 'Conditions Met' column from the data."""
+    refined_csv = {}
     for month in self.months_list:
       file_path = Path(f"{self.config['year']}/{month}-Genset-Savings.csv")
       if not file_path.exists():
@@ -54,9 +54,24 @@ class CalculateGensetSavings:
           if "Conditions Met" in headers:
             row.pop(conditions_met_index)
           month_data.append(row)
-      refined_data[month] = month_data
+      refined_csv[month] = month_data
       print(f"Processed {file_path}.\n\n")
-    return refined_data
+    return refined_csv
+
+  def refine_time_elapsed(self) -> Dict[str, List[List[str]]]:
+    """Remove rows where the 'Time Elapsed (Minutes)' column has values less than 1."""
+    refined_csv = {}
+    for month in self.months_list:
+      month_data = []
+      headers = self.refined_data[month][0]
+      if "Time Elapsed (Minutes)" in headers:
+        time_elapsed_index = headers.index("Time Elapsed (Minutes)")
+        month_data.append(headers)
+        for row in self.refined_data[month][1:]:
+          if float(row[time_elapsed_index]) >= 1:
+            month_data.append(row)
+      refined_csv[month] = month_data
+    return refined_csv
 
   def calculate_genset_savings(self) -> None:
     """Calculate genset savings."""
