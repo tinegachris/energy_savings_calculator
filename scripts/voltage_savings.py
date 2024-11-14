@@ -37,7 +37,7 @@ class VoltageSavingsCalculator:
         logging.info(f"Created XLSX file: {file_name}")
 
         for month in self.months_list:
-            worksheet = workbook.add_worksheet(f"{site}_{month}_Savings")
+            worksheet = workbook.add_worksheet(f"{month}_{site}_Voltage_Savings")
             file_path = Path(f"{year}/{month}-Voltage-Timeseries.csv")
             if not file_path.exists():
                 logging.warning(f"{month}-Voltage-Timeseries.csv does not exist. Skipping.")
