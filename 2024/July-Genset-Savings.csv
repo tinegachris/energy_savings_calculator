@@ -7,131 +7,129 @@ Date,Time Initiated,Time Elapsed (minutes),Energy Saving (kWh)
 2024-07-03,05:46:10,3.1936,68.907
 2024-07-04,11:12:44,1.3386,5.06
 2024-07-04,11:25:12,15.0198,166.677
-2024-07-05,19:01:56,6.5123,71.269,"plc_grid_breaker_opened, pcsv_not_fault"
-2024-07-06,16:50:11,1.1899,0.412,"pcsv_off_grid_mode, pcsv_on, pcsv_not_fault"
-2024-07-06,20:02:26,5.8972,49.063,"plc_grid_breaker_opened, pcsv_not_fault"
-2024-07-06,20:32:13,2.4377,27.978,"pcsv_var_abnormal, pcsv_not_fault"
-2024-07-07,14:19:35,8.9029,8.527,utility_grid_off
-2024-07-07,14:30:48,29.7507,23.984,"plc_grid_breaker_opened, pcsv_not_fault"
-2024-07-07,17:12:02,5.9328,3.646,"plc_grid_breaker_opened, pcsv_not_fault"
-2024-07-07,17:21:27,3.9543,2.83,utility_grid_off
-2024-07-07,18:23:29,71.8665,34.097,"plc_grid_breaker_opened, pcsv_not_fault"
-2024-07-07,19:51:37,3.8059,1.631,"pcsv_off_grid_mode, pcsv_on, pcsv_not_fault"
-2024-07-08,11:07:45,3.1856,76.175,"utility_grid_frequency_abnormal, pcsv_not_fault"
-2024-07-08,11:27:36,5.7578,26.816,
-2024-07-08,11:34:19,70.1316,1130.032,"plc_battery_breaker_closed, pcsv_on"
-2024-07-08,20:04:15,51.7426,984.079,"utility_grid_frequency_abnormal, pcsv_not_fault"
-2024-07-10,11:13:47,27.4859,505.97,
-2024-07-10,11:42:12,59.4636,1178.809,"plc_battery_breaker_closed, pcsv_on"
+2024-07-05,19:01:56,6.5123,71.269
+2024-07-06,16:50:11,1.1899,0.412
+2024-07-06,20:02:26,5.8972,49.063
+2024-07-06,20:32:13,2.4377,27.978
+2024-07-07,14:19:35,8.9029,8.527
+2024-07-07,14:30:48,29.7507,23.984
+2024-07-07,17:12:02,5.9328,3.646
+2024-07-07,17:21:27,3.9543,2.83
+2024-07-07,18:23:29,71.8665,34.097
+2024-07-07,19:51:37,3.8059,1.631
+2024-07-08,11:07:45,3.1856,76.175
+2024-07-08,11:27:36,5.7578,26.816
+2024-07-08,11:34:19,70.1316,1130.032
+2024-07-08,20:04:15,51.7426,984.079
+2024-07-10,11:13:47,27.4859,505.97
+2024-07-10,11:42:12,59.4636,1178.809
 2024-07-10,13:06:54,2.0286,24.94
 2024-07-10,13:09:53,4.8885,116.865
-2024-07-11,03:27:05,12.0148,132.198,"plc_grid_breaker_opened, utility_grid_off, pcsv_on, pcsv_not_fault"
-2024-07-11,05:44:16,7.5196,126.655,"pcsv_off_grid_mode, pcsv_on, pcsv_not_fault"
-2024-07-11,08:02:40,2.0891,42.53,"pcsv_off_grid_mode, pcsv_on, pcsv_not_fault"
-2024-07-11,18:21:12,2.8845,42.89,"utility_grid_frequency_abnormal, pcsv_on, pcsv_not_fault"
-2024-07-11,22:06:48,9.9201,265.889,"utility_grid_frequency_abnormal, pcsv_on, pcsv_not_fault"
-2024-07-11,22:56:50,2.8348,51.41,"pcsv_off_grid_mode, pcsv_on, pcsv_not_fault"
-2024-07-12,09:09:29,7.6558,186.386,"utility_grid_frequency_abnormal, pcsv_on, pcsv_not_fault"
-2024-07-12,09:54:39,8.3437,237.247,"utility_grid_frequency_abnormal, pcsv_on, pcsv_not_fault"
-2024-07-12,20:28:07,4.4924,80.553,"pcsv_off_grid_mode, pcsv_on, pcsv_not_fault"
-2024-07-12,23:33:08,5.7843,111.127,"pcsv_off_grid_mode, pcsv_on, pcsv_not_fault"
-2024-07-13,02:28:00,2.4413,36.683,"pcsv_off_grid_mode, pcsv_on, pcsv_not_fault"
-2024-07-13,15:45:41,9.184,249.299,"plc_grid_breaker_opened, pcsv_on, pcsv_not_fault"
-2024-07-13,16:08:50,7.5129,198.511,"utility_grid_frequency_abnormal, pcsv_on, pcsv_not_fault"
-2024-07-14,05:03:58,4.5091,110.837,"pcsv_off_grid_mode, pcsv_on, pcsv_not_fault"
-2024-07-14,09:20:36,1.1901,0.199,"pcsv_off_grid_mode, pcsv_on, pcsv_not_fault"
-2024-07-14,09:35:26,2.1384,0.0,"utility_grid_off, pcsv_not_fault"
-2024-07-14,09:40:48,4.579,14.9,"utility_grid_off, pcsv_not_fault"
-2024-07-14,10:18:24,8.602,27.935,"plc_grid_breaker_opened, plc_battery_breaker_closed, pcsv_on"
-2024-07-14,10:29:19,7.7117,17.629,"utility_grid_off, pcsv_not_fault"
-2024-07-14,10:42:31,6.7518,1.666,"utility_grid_off, pcsv_not_fault"
-2024-07-15,21:31:35,9.4541,250.134,"pcsv_off_grid_mode, pcsv_on, pcsv_not_fault"
-2024-07-15,22:57:59,3.4258,76.518,"pcsv_off_grid_mode, pcsv_on, pcsv_not_fault"
-2024-07-16,00:07:07,2.6398,55.47,"pcsv_off_grid_mode, pcsv_on, pcsv_not_fault"
-2024-07-16,03:14:47,2.174,51.542,"pcsv_off_grid_mode, pcsv_on, pcsv_not_fault"
-2024-07-16,09:15:40,5.8748,167.862,"pcsv_off_grid_mode, pcsv_on, pcsv_not_fault"
-2024-07-16,09:29:49,2.1222,42.259,"pcsv_off_grid_mode, pcsv_on, pcsv_not_fault"
-2024-07-17,10:12:02,1.9499,45.282,"pcsv_off_grid_mode, pcsv_on, pcsv_not_fault"
-2024-07-17,18:23:24,4.2542,116.773,"pcsv_off_grid_mode, pcsv_on, pcsv_not_fault"
-2024-07-18,00:04:38,3.3498,39.145,"pcsv_off_grid_mode, pcsv_on, pcsv_not_fault"
-2024-07-18,07:47:07,5.8152,161.009,"utility_grid_frequency_abnormal, pcsv_on, pcsv_not_fault"
-2024-07-18,13:45:06,3.7393,63.478,"pcsv_off_grid_mode, pcsv_on, pcsv_not_fault"
-2024-07-18,14:14:05,2.5513,49.542,"utility_grid_off, pcsv_on, pcsv_not_fault"
-2024-07-18,14:27:09,3.4488,77.466,"pcsv_off_grid_mode, pcsv_on, pcsv_not_fault"
-2024-07-18,14:51:02,4.4542,83.269,"pcsv_off_grid_mode, pcsv_on, pcsv_not_fault"
-2024-07-18,15:26:39,9.0849,150.558,"pcsv_off_grid_mode, pcsv_on, pcsv_not_fault"
-2024-07-18,16:29:28,2.9936,80.257,"pcsv_off_grid_mode, pcsv_on, pcsv_not_fault"
-2024-07-18,16:46:05,2.3259,35.847,"pcsv_off_grid_mode, pcsv_on, pcsv_not_fault"
-2024-07-18,17:45:25,3.0405,44.954,"pcsv_off_grid_mode, pcsv_on, pcsv_not_fault"
-2024-07-18,19:22:12,11.0758,248.952,"utility_grid_frequency_abnormal, pcsv_on, pcsv_not_fault"
-2024-07-18,23:06:07,3.3041,71.267,"pcsv_off_grid_mode, pcsv_on, pcsv_not_fault"
-2024-07-19,20:09:33,3.8458,104.319,"pcsv_off_grid_mode, pcsv_on, pcsv_not_fault"
-2024-07-20,04:56:32,3.4117,68.921,"pcsv_off_grid_mode, pcsv_on, pcsv_not_fault"
-2024-07-20,11:14:05,10.2565,328.023,"pcsv_off_grid_mode, pcsv_on, pcsv_not_fault"
-2024-07-20,23:29:40,3.1835,87.261,"pcsv_off_grid_mode, pcsv_on, pcsv_not_fault"
-2024-07-21,03:57:13,3.3918,73.5,"pcsv_off_grid_mode, pcsv_on, pcsv_not_fault"
-2024-07-21,08:43:28,5.2499,24.022,"pcsv_off_grid_mode, pcsv_on, pcsv_not_fault"
-2024-07-21,10:44:57,1.1305,0.0,"pcsv_off_grid_mode, pcsv_on, pcsv_not_fault"
-2024-07-21,11:14:52,1.1794,0.058,"pcsv_off_grid_mode, pcsv_on, pcsv_not_fault"
-2024-07-21,12:47:08,1.1924,5.219,"plc_grid_breaker_opened, pcsv_on, pcsv_not_fault"
-2024-07-21,12:49:32,1.2763,5.646,"utility_grid_off, pcsv_off_grid_mode"
-2024-07-21,13:50:31,11.1289,33.574,"plc_grid_breaker_opened, plc_battery_breaker_closed, pcsv_on"
-2024-07-21,14:02:49,1.1503,0.0,"utility_grid_off, pcsv_off_grid_mode"
-2024-07-21,14:05:11,1.1954,0.0,"utility_grid_off, pcsv_off_grid_mode"
-2024-07-21,14:07:34,2.3767,4.509,"utility_grid_off, pcsv_not_fault"
-2024-07-22,11:21:57,2.5824,76.641,"pcsv_off_grid_mode, pcsv_on, pcsv_not_fault"
-2024-07-22,19:17:31,5.1966,108.262,"utility_grid_frequency_abnormal, pcsv_on, pcsv_not_fault"
-2024-07-23,09:09:22,1.1146,0.0,pcsv_on
-2024-07-23,16:08:27,4.3905,123.844,"pcsv_off_grid_majority_mode, pcsv_on, pcsv_not_fault"
-2024-07-25,09:13:05,2.5995,51.719,"pcsv_off_grid_majority_mode, pcsv_not_fault, pcsv_on"
-2024-07-25,10:47:29,2.5836,61.778,"pcsv_off_grid_majority_mode, pcsv_not_fault, pcsv_on"
-2024-07-25,10:58:05,3.1684,72.901,"pcsv_off_grid_majority_mode, pcsv_not_fault, pcsv_on"
-2024-07-25,17:07:22,2.7676,72.76,"pcsv_off_grid_majority_mode, pcsv_not_fault, pcsv_on"
-2024-07-26,08:29:41,5.615,161.859,"pcsv_off_grid_majority_mode, pcsv_not_fault, pcsv_on"
-2024-07-26,10:39:48,19.7489,355.38,"plc_grid_breaker_opened, pcsv_not_fault, pcsv_on"
-2024-07-26,16:03:15,4.4767,118.691,"utility_grid_frequency_abnormal, pcsv_not_fault, pcsv_on"
-2024-07-26,16:23:51,4.632,120.695,"utility_grid_frequency_abnormal, pcsv_not_fault, pcsv_on"
-2024-07-26,16:30:47,1.2051,0.0,"utility_grid_off, pcsv_off_grid_mode"
-2024-07-26,16:33:11,23.7484,333.132,"utility_grid_off, pcsv_not_fault"
-2024-07-26,18:29:55,7.2092,197.956,"pcsv_var_abnormal, pcsv_off_grid_mode, pcsv_not_fault, pcsv_on"
-2024-07-27,06:18:15,3.6461,79.037,"pcsv_off_grid_majority_mode, pcsv_not_fault, pcsv_on"
-2024-07-27,07:50:06,2.9823,80.475,"pcsv_off_grid_majority_mode, pcsv_not_fault, pcsv_on"
-2024-07-27,11:27:48,3.0139,79.148,"pcsv_off_grid_majority_mode, pcsv_not_fault, pcsv_on"
-2024-07-27,16:46:22,17.0524,305.139,"utility_grid_frequency_abnormal, pcsv_not_fault, pcsv_on"
-2024-07-27,18:55:15,1.1283,0.0,"pcsv_off_grid_majority_mode, pcsv_not_fault, pcsv_on"
-2024-07-27,20:04:07,37.4969,556.288,"plc_grid_breaker_opened, pcsv_not_fault, pcsv_on"
-2024-07-28,05:14:13,1.1387,5.167,"pcsv_off_grid_majority_mode, pcsv_not_fault, pcsv_on"
-2024-07-28,09:26:08,9.2856,38.015,"plc_grid_breaker_opened, pcsv_not_fault, pcsv_on"
-2024-07-28,10:14:01,5.2668,23.076,"plc_grid_breaker_opened, utility_grid_off, pcsv_off_grid_majority_mode, pcsv_not_fault, pcsv_on"
-2024-07-28,10:20:29,1.1862,3.215,"utility_grid_off, pcsv_off_grid_mode"
-2024-07-28,10:22:51,1.0793,1.899,"utility_grid_off, pcsv_off_grid_mode"
-2024-07-28,10:52:51,5.1303,20.366,"plc_grid_breaker_opened, pcsv_not_fault, pcsv_on"
-2024-07-28,11:37:32,6.7933,24.267,"plc_grid_breaker_opened, pcsv_not_fault, pcsv_on"
-2024-07-28,12:50:30,20.3306,87.489,
-2024-07-28,13:11:46,5.9235,28.964,"plc_battery_breaker_closed, pcsv_on"
-2024-07-28,13:23:47,250.2267,132.111,
-2024-07-28,17:50:50,6.197,25.32,"plc_grid_breaker_opened, pcsv_not_fault, pcsv_on"
-2024-07-29,00:30:49,4.3196,24.221,"utility_grid_frequency_abnormal, pcsv_not_fault, pcsv_on"
-2024-07-29,14:32:34,11.8737,378.935,"pcsv_off_grid_majority_mode, pcsv_not_fault, pcsv_on"
-2024-07-29,20:41:44,8.9126,129.244,"plc_grid_breaker_opened, utility_grid_off, utility_grid_frequency_abnormal, pcsv_not_fault, pcsv_on"
-2024-07-29,22:29:30,5.404,97.775,"pcsv_off_grid_mode, pcsv_not_fault, pcsv_on"
-2024-07-29,23:04:15,2.4575,34.334,"pcsv_off_grid_mode, pcsv_not_fault, pcsv_on"
-2024-07-30,12:19:51,7.1034,126.763,"pcsv_var_abnormal, pcsv_not_fault, pcsv_on"
-2024-07-30,12:37:11,1.1198,0.0,"utility_grid_off, utility_grid_frequency_abnormal, pcsv_not_fault, pcsv_on"
-2024-07-30,12:39:31,53.3162,1123.096,"utility_grid_off, pcsv_off_grid_mode"
-2024-07-30,13:46:35,10.3112,154.761,"utility_grid_off, pcsv_not_fault, pcsv_on"
-2024-07-30,13:59:49,1.7522,29.513,"pcsv_off_grid_majority_mode, pcsv_not_fault, pcsv_on"
-2024-07-30,14:04:49,8.9224,192.12,"utility_grid_off, pcsv_not_fault, pcsv_on"
-2024-07-30,15:20:51,3.4576,100.277,"pcsv_off_grid_majority_mode, pcsv_not_fault, pcsv_on"
-2024-07-30,16:36:04,6.3403,177.542,"pcsv_off_grid_majority_mode, pcsv_not_fault, pcsv_on"
-2024-07-30,19:33:34,3.4714,106.97,"pcsv_off_grid_majority_mode, pcsv_not_fault, pcsv_on"
-2024-07-30,20:45:30,2.6641,70.469,"pcsv_off_grid_majority_mode, pcsv_not_fault, pcsv_on"
-2024-07-30,23:34:30,1.1261,0.0,"utility_grid_off, pcsv_not_fault, pcsv_on"
-2024-07-30,23:53:58,8.2739,108.603,"pcsv_off_grid_majority_mode, pcsv_not_fault, pcsv_on"
-2024-07-31,08:32:24,1.1956,0.234,"pcsv_off_grid_majority_mode, pcsv_not_fault, pcsv_on"
-2024-07-31,12:57:41,35.719,736.388,"utility_grid_frequency_abnormal, pcsv_not_fault, pcsv_on"
-2024-07-31,13:45:15,2.3651,34.86,"utility_grid_frequency_abnormal, pcsv_not_fault, pcsv_on"
-2024-07-31,17:54:18,3.6043,79.049,"utility_grid_off, pcsv_not_fault, pcsv_on"
-2024-07-31,18:28:49,8.5574,171.998,"utility_grid_off, pcsv_not_fault, pcsv_on"
-,,,
-,,Total savings,18120.152999999995
+2024-07-11,03:27:05,12.0148,132.198
+2024-07-11,05:44:16,7.5196,126.655
+2024-07-11,08:02:40,2.0891,42.53
+2024-07-11,18:21:12,2.8845,42.89
+2024-07-11,22:06:48,9.9201,265.889
+2024-07-11,22:56:50,2.8348,51.41
+2024-07-12,09:09:29,7.6558,186.386
+2024-07-12,09:54:39,8.3437,237.247
+2024-07-12,20:28:07,4.4924,80.553
+2024-07-12,23:33:08,5.7843,111.127
+2024-07-13,02:28:00,2.4413,36.683
+2024-07-13,15:45:41,9.184,249.299
+2024-07-13,16:08:50,7.5129,198.511
+2024-07-14,05:03:58,4.5091,110.837
+2024-07-14,09:20:36,1.1901,0.199
+2024-07-14,09:35:26,2.1384,0.0
+2024-07-14,09:40:48,4.579,14.9
+2024-07-14,10:18:24,8.602,27.935
+2024-07-14,10:29:19,7.7117,17.629
+2024-07-14,10:42:31,6.7518,1.666
+2024-07-15,21:31:35,9.4541,250.134
+2024-07-15,22:57:59,3.4258,76.518
+2024-07-16,00:07:07,2.6398,55.47
+2024-07-16,03:14:47,2.174,51.542
+2024-07-16,09:15:40,5.8748,167.862
+2024-07-16,09:29:49,2.1222,42.259
+2024-07-17,10:12:02,1.9499,45.282
+2024-07-17,18:23:24,4.2542,116.773
+2024-07-18,00:04:38,3.3498,39.145
+2024-07-18,07:47:07,5.8152,161.009
+2024-07-18,13:45:06,3.7393,63.478
+2024-07-18,14:14:05,2.5513,49.542
+2024-07-18,14:27:09,3.4488,77.466
+2024-07-18,14:51:02,4.4542,83.269
+2024-07-18,15:26:39,9.0849,150.558
+2024-07-18,16:29:28,2.9936,80.257
+2024-07-18,16:46:05,2.3259,35.847
+2024-07-18,17:45:25,3.0405,44.954
+2024-07-18,19:22:12,11.0758,248.952
+2024-07-18,23:06:07,3.3041,71.267
+2024-07-19,20:09:33,3.8458,104.319
+2024-07-20,04:56:32,3.4117,68.921
+2024-07-20,11:14:05,10.2565,328.023
+2024-07-20,23:29:40,3.1835,87.261
+2024-07-21,03:57:13,3.3918,73.5
+2024-07-21,08:43:28,5.2499,24.022
+2024-07-21,10:44:57,1.1305,0.0
+2024-07-21,11:14:52,1.1794,0.058
+2024-07-21,12:47:08,1.1924,5.219
+2024-07-21,12:49:32,1.2763,5.646
+2024-07-21,13:50:31,11.1289,33.574
+2024-07-21,14:02:49,1.1503,0.0
+2024-07-21,14:05:11,1.1954,0.0
+2024-07-21,14:07:34,2.3767,4.509
+2024-07-22,11:21:57,2.5824,76.641
+2024-07-22,19:17:31,5.1966,108.262
+2024-07-23,09:09:22,1.1146,0.0
+2024-07-23,16:08:27,4.3905,123.844
+2024-07-25,09:13:05,2.5995,51.719
+2024-07-25,10:47:29,2.5836,61.778
+2024-07-25,10:58:05,3.1684,72.901
+2024-07-25,17:07:22,2.7676,72.76
+2024-07-26,08:29:41,5.615,161.859
+2024-07-26,10:39:48,19.7489,355.38
+2024-07-26,16:03:15,4.4767,118.691
+2024-07-26,16:23:51,4.632,120.695
+2024-07-26,16:30:47,1.2051,0.0
+2024-07-26,16:33:11,23.7484,333.132
+2024-07-26,18:29:55,7.2092,197.956
+2024-07-27,06:18:15,3.6461,79.037
+2024-07-27,07:50:06,2.9823,80.475
+2024-07-27,11:27:48,3.0139,79.148
+2024-07-27,16:46:22,17.0524,305.139
+2024-07-27,18:55:15,1.1283,0.0
+2024-07-27,20:04:07,37.4969,556.288
+2024-07-28,05:14:13,1.1387,5.167
+2024-07-28,09:26:08,9.2856,38.015
+2024-07-28,10:14:01,5.2668,23.076
+2024-07-28,10:20:29,1.1862,3.215
+2024-07-28,10:22:51,1.0793,1.899
+2024-07-28,10:52:51,5.1303,20.366
+2024-07-28,11:37:32,6.7933,24.267
+2024-07-28,12:50:30,20.3306,87.489
+2024-07-28,13:11:46,5.9235,28.964
+2024-07-28,13:23:47,250.2267,132.111
+2024-07-28,17:50:50,6.197,25.32
+2024-07-29,00:30:49,4.3196,24.221
+2024-07-29,14:32:34,11.8737,378.935
+2024-07-29,20:41:44,8.9126,129.244
+2024-07-29,22:29:30,5.404,97.775
+2024-07-29,23:04:15,2.4575,34.334
+2024-07-30,12:19:51,7.1034,126.763
+2024-07-30,12:37:11,1.1198,0.0
+2024-07-30,12:39:31,53.3162,1123.096
+2024-07-30,13:46:35,10.3112,154.761
+2024-07-30,13:59:49,1.7522,29.513
+2024-07-30,14:04:49,8.9224,192.12
+2024-07-30,15:20:51,3.4576,100.277
+2024-07-30,16:36:04,6.3403,177.542
+2024-07-30,19:33:34,3.4714,106.97
+2024-07-30,20:45:30,2.6641,70.469
+2024-07-30,23:34:30,1.1261,0.0
+2024-07-30,23:53:58,8.2739,108.603
+2024-07-31,08:32:24,1.1956,0.234
+2024-07-31,12:57:41,35.719,736.388
+2024-07-31,13:45:15,2.3651,34.86
+2024-07-31,17:54:18,3.6043,79.049
+2024-07-31,18:28:49,8.5574,171.998
