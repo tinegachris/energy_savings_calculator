@@ -20,6 +20,8 @@
   "country": "KE",
   "site": "MVT",
   "year": 2024,
+  "fuel_plus_MTCE_cost": 0.30,
+  "cost_per_outage": 500,
   "calculation_parameters": {
     "discount_rate": 0,
     "inflation_rate": 0
