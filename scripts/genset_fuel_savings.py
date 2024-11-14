@@ -121,7 +121,7 @@ class CalculateGensetSavings:
     """Copy CSV data of each month into the XLSX file and calculate savings."""
     year = self.config["year"]
     site = self.config["site"]
-    file_name = f"{year}_Genset_Fuel_Savings_{site}.xlsx"
+    file_name = f"{year}_{site}_Genset_Fuel_Savings.xlsx"
     workbook = xlsxwriter.Workbook(file_name)
     logging.info(f"Created XLSX file: {file_name}")
 
@@ -158,24 +158,32 @@ class CalculateGensetSavings:
       return
     total_kwh_saved = sum(float(row[energy_saving_col_idx]) for row in reader[1:] if row[energy_saving_col_idx])
     num_outages = len([row for row in reader[1:] if row[energy_saving_col_idx]]) - 1
-    fuel_plus_mtce_cost = self.config["fuel_plus_MTCE_cost"]
-    genset_fuel_savings = total_kwh_saved * fuel_plus_mtce_cost
+    cost_fuel_plus_MTCE = self.config["cost_fuel_plus_MTCE"]
+    genset_fuel_savings = total_kwh_saved * cost_fuel_plus_MTCE
     cost_per_outage = self.config["cost_per_outage"]
     outage_savings = num_outages * cost_per_outage
     worksheet.write(len(reader) + 2, 0, "Total kWh Saved")
     worksheet.write(len(reader) + 2, 1, total_kwh_saved)
-    worksheet.write(len(reader) + 3, 0, "Number of Outages")
-    worksheet.write(len(reader) + 3, 1, num_outages)
-    worksheet.write(len(reader) + 4, 0, "Genset Fuel Savings")
-    worksheet.write(len(reader) + 4, 1, genset_fuel_savings)
-    worksheet.write(len(reader) + 5, 0, "Outage Savings")
-    worksheet.write(len(reader) + 5, 1, outage_savings)
-    worksheet.write(len(reader) + 7, 0, "Solar Yield")
-    worksheet.write(len(reader) + 7, 1, self.solar_yield_data.get(month, "N/A"))
-    worksheet.write(len(reader) + 8, 0, "Grid Yield")
-    worksheet.write(len(reader) + 8, 1, self.genset_grid_yield_data.get(month, ("N/A", "N/A"))[0])
-    worksheet.write(len(reader) + 9, 0, "Genset Yield")
-    worksheet.write(len(reader) + 9, 1, self.genset_grid_yield_data.get(month, ("N/A", "N/A"))[1])
+    worksheet.write(len(reader) + 4, 0, "Number of Outages")
+    worksheet.write(len(reader) + 4, 1, num_outages)
+    worksheet.write(len(reader) + 6, 0, "Genset Fuel Savings")
+    worksheet.write(len(reader) + 6, 1, genset_fuel_savings)
+    worksheet.write(len(reader) + 8, 0, "Outage Savings")
+    worksheet.write(len(reader) + 8, 1, outage_savings)
+    worksheet.write(len(reader) + 10, 0, "Solar Yield")
+    worksheet.write(len(reader) + 10, 1, self.solar_yield_data.get(month, "N/A"))
+    worksheet.write(len(reader) + 11, 0, "Grid Yield")
+    worksheet.write(len(reader) + 11, 1, self.genset_grid_yield_data.get(month, ("N/A", "N/A"))[0])
+    worksheet.write(len(reader) + 12, 0, "Genset Yield")
+    worksheet.write(len(reader) + 12, 1, self.genset_grid_yield_data.get(month, ("N/A", "N/A"))[1])
+    worksheet.write(len(reader) + 14, 0, "Power Quality Savings")
+    worksheet.write(len(reader) + 14, 1, "N/A")
+    worksheet.write(len(reader) + 16, 0, "Energy Efficiency Savings")
+    worksheet.write(len(reader) + 16, 1, "N/A")
+    worksheet.write(len(reader) + 18, 0, "Maintenance Savings")
+    worksheet.write(len(reader) + 18, 1, "N/A")
+    worksheet.write(len(reader) + 20, 0, "Total Savings")
+    worksheet.write(len(reader) + 20, 1, "N/A")
     for col_idx, col_name in enumerate(reader[0]):
       max_len = max(len(str(cell)) for cell in [col_name] + [row[col_idx] for row in reader[1:]])
       worksheet.set_column(col_idx, col_idx, max_len + 2)
@@ -185,7 +193,7 @@ class CalculateGensetSavings:
     """Calculate yearly savings and update the summary worksheet."""
     year = self.config["year"]
     site = self.config["site"]
-    summary_worksheet = workbook.add_worksheet("Summary")
+    summary_worksheet = workbook.add_worksheet(f"{site}_{year}_Savings_Summary")
 
     summary_worksheet.write(0, 0, "Month")
     summary_worksheet.write(0, 1, "Total kWh Saved")
@@ -195,11 +203,22 @@ class CalculateGensetSavings:
     summary_worksheet.write(0, 5, "Solar Yield")
     summary_worksheet.write(0, 6, "Grid Yield")
     summary_worksheet.write(0, 7, "Genset Yield")
+    summary_worksheet.write(0, 8, "Power Quality Savings")
+    summary_worksheet.write(0, 9, "Energy Efficiency Savings")
+    summary_worksheet.write(0, 10, "Maintenance Savings")
+    summary_worksheet.write(0, 11, "Total Savings")
 
     total_kwh_saved_year = 0
     total_num_outages_year = 0
     total_genset_fuel_savings_year = 0
     total_outage_savings_year = 0
+    total_solar_yield_year = 0
+    total_grid_yield_year = 0
+    total_genset_yield_year = 0
+    total_power_quality_savings_year = 0
+    total_energy_efficiency_savings_year = 0
+    total_maintenance_savings_year = 0
+    total_savings_year = 0
 
     for row_idx, month in enumerate(self.months_list, start=1):
       file_path = Path(f"{year}/{month}-Genset-Savings.csv")
@@ -218,10 +237,13 @@ class CalculateGensetSavings:
           continue
         total_kwh_saved = sum(float(row[energy_saving_col_idx]) for row in reader[1:] if row[energy_saving_col_idx])
         num_outages = len([row for row in reader[1:] if row[energy_saving_col_idx]]) - 1
-        fuel_plus_mtce_cost = self.config["fuel_plus_MTCE_cost"]
-        genset_fuel_savings = total_kwh_saved * fuel_plus_mtce_cost
+        cost_fuel_plus_MTCE = self.config["cost_fuel_plus_MTCE"]
+        genset_fuel_savings = total_kwh_saved * cost_fuel_plus_MTCE
         cost_per_outage = self.config["cost_per_outage"]
         outage_savings = num_outages * cost_per_outage
+        total_savings = genset_fuel_savings + outage_savings
+        summary_worksheet.write(row_idx, 11, total_savings)
+        total_savings_year += total_savings
 
         summary_worksheet.write(row_idx, 0, month)
         summary_worksheet.write(row_idx, 1, total_kwh_saved)
@@ -231,11 +253,18 @@ class CalculateGensetSavings:
         summary_worksheet.write(row_idx, 5, self.solar_yield_data.get(month, "N/A"))
         summary_worksheet.write(row_idx, 6, self.genset_grid_yield_data.get(month, ("N/A", "N/A"))[0])
         summary_worksheet.write(row_idx, 7, self.genset_grid_yield_data.get(month, ("N/A", "N/A"))[1])
+        summary_worksheet.write(row_idx, 8, "N/A")
+        summary_worksheet.write(row_idx, 9, "N/A")
+        summary_worksheet.write(row_idx, 10, "N/A")
+        summary_worksheet.write(row_idx, 11, "N/A")
 
         total_kwh_saved_year += total_kwh_saved
         total_num_outages_year += num_outages
         total_genset_fuel_savings_year += genset_fuel_savings
         total_outage_savings_year += outage_savings
+        total_solar_yield_year += float(self.solar_yield_data.get(month, 0))
+        total_grid_yield_year += float(self.genset_grid_yield_data.get(month, ("0", "0"))[0])
+        total_genset_yield_year += float(self.genset_grid_yield_data.get(month, ("0", "0"))[1])
 
     summary_worksheet.write(len(self.months_list) + 1, 0, "Total")
     summary_worksheet.write(len(self.months_list) + 1, 1, total_kwh_saved_year)
