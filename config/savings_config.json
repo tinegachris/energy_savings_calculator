@@ -1,27 +1,15 @@
 {
-  "savings": {
-    "genset": {
-      "fuel_cost_per_liter": 0,
-      "maintenance_cost_per_hour": 0,
-      "operating_hours_per_day": 0
-    },
-    "solar": {
-      "installation_cost": 0,
-      "maintenance_cost_per_year": 0,
-      "lifespan_years": 0
-    },
-    "battery": {
-      "installation_cost": 0,
-      "maintenance_cost_per_year": 0,
-      "lifespan_years": 0
-    }
-  },
-  "currency": "USD",
   "country": "KE",
   "site": "MVT",
   "year": 2024,
-  "fuel_plus_MTCE_cost": 0.30,
+  "currency": "USD",
+  "cost_fuel_plus_MTCE": 0.30,
   "cost_per_outage": 500,
+  "cost_per_kWh": 0.15,
+  "site_capacity": 1000,
+  "site_voltage": 400,
+  "site_frequency": 50,
+  "site_power_factor": 0.93,
   "calculation_parameters": {
     "discount_rate": 0,
     "inflation_rate": 0
