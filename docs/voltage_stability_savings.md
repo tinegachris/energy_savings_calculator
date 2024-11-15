@@ -72,25 +72,3 @@ Example:
 2. **Compare two scenarios:**
 
 - Without BESS: Based on grid voltage fluctuations (ΔV_grid).
-
-## Additional Considerations
-
-- **Data Source Validation:** Ensure accurate power and voltage measurements.
-- **Voltage-Cost Mapping:** Obtain cost multipliers from utility penalties, maintenance logs, or equipment manufacturers.
-- **Energy Tariffs:** Use real-time tariffs to enhance accuracy for savings calculations.
-
-1. **Aggregate cost savings over the entire month:**
-
-- Total Cost Savings = Σ (Cost Savings per Time Interval)
-
-2. **Compare two scenarios:**
-
-- Without BESS: Based on grid voltage fluctuations (ΔV_grid).
-
-- With BESS: Based on corrected voltage (ΔV_BESS).
-
-## Additional Considerations
-
-- **Data Source Validation:** Ensure accurate power and voltage measurements.
-- **Voltage-Cost Mapping:** Obtain cost multipliers from utility penalties, maintenance logs, or equipment manufacturers.
-- **Energy Tariffs:** Use real-time tariffs to enhance accuracy for savings calculations.

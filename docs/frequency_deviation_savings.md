@@ -99,9 +99,3 @@ Some utilities impose penalties on consumers who exacerbate frequency instabilit
 
 - Without BESS: Based on Δf_grid.
 - With BESS: Based on Δf_BESS.
-
-## Step 5: Visualize and Analyze
-
-1. Plot frequency deviations (Δf_grid vs. Δf_BESS).
-2. Overlay the cost savings as a time series for better insights.
-3. Use histograms to visualize the distribution of frequency deviations before and after BESS corrections.
