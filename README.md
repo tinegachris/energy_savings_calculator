@@ -13,23 +13,23 @@
 
 ## Project Overview
 
-This project calculates energy savings from EMS data using CSV data and generates a summary in an Excel file. It processes monthly data to compute savings and aggregates yearly totals.
+This project calculates energy savings from EMS data using CSV files and generates a summary in an Excel file. It processes monthly data to compute savings and aggregates yearly totals.
 
 ## Project Structure
 
 - `scripts/`: Directory containing the scripts used for calculating savings from the data.
   - `genset_fuel_savings.py`: Script for calculating genset fuel savings.
   - `power_factor_savings.py`: Script for calculating power factor savings.
-  - `frequency_savings.py`: Script for calculating power factor savings.
-  - `voltage_stability_savings.py`: Script for calculating power factor savings.
-  - `harmonics_savings.py`: Script for calculating power factor savings.
+  - `frequency_savings.py`: Script for calculating frequency savings.
+  - `voltage_stability_savings.py`: Script for calculating voltage stability savings.
+  - `harmonics_savings.py`: Script for calculating harmonics savings.
 - `config/savings_config.json`: Configuration file containing year, site, and cost details.
 - `data/`: Directory containing the CSV data files.
   - `genset_savings_data/`: Directory containing genset savings data.
   - `power_factor_savings_data/`: Directory containing power factor savings data.
-  - `frequency_data/`: Directory containing yield data.
-  - `voltage_data/`: Directory containing yield data.
-  - `harmonics_data/`: Directory containing yield data.
+  - `frequency_data/`: Directory containing frequency data.
+  - `voltage_data/`: Directory containing voltage data.
+  - `harmonics_data/`: Directory containing harmonics data.
   - `yield_data/`: Directory containing yield data.
 
 ## Requirements
@@ -48,15 +48,13 @@ This project calculates energy savings from EMS data using CSV data and generate
 
 2. Install the required libraries:
 
-- You can install the required libraries using the following command:
-
   ```sh
   pip install -r requirements.txt
   ```
 
-- Make sure your Python environment is properly set up and activated before installing the dependencies.
+  Ensure your Python environment is properly set up and activated before installing the dependencies.
 
-- If you add new dependencies, update the `requirements.txt` file by running:
+  If you add new dependencies, update the `requirements.txt` file by running:
 
   ```sh
   pip freeze > requirements.txt
