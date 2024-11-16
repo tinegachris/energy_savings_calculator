@@ -2,6 +2,8 @@
 
 This project calculates genset fuel savings from CSV files and generates a summary in an Excel file.
 
+![alt text](<DALL·E 2024-11-16 13.09.33 - A visually appealing header image representing fuel savings and renewable energy integration. The image should feature a clean energy concept with sol.webp>)
+
 ## Project Structure
 
 - `scripts/genset_fuel_savings.py`: Main script for calculating genset savings.
