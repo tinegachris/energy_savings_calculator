@@ -42,7 +42,7 @@ This project calculates energy savings from EMS data using CSV files and generat
 1. Clone the repository:
 
   ```sh
-  git clone https://github.com/yourusername/genset_savings_calculator.git
+  git clone https://github.com/tinegachris/genset_savings_calculator.git
   cd genset_savings_calculator
   ```
 
