@@ -207,19 +207,29 @@ class CalculateGensetSavings:
     total_genset_savings_year = 0
 
     for row_idx, month in enumerate(self.months_list, start=1):
-      worksheet_name = f"{site}_{month}_Savings"
-      worksheet_path = f"results/{year}_{site}_Genset_Fuel_Savings.xlsx"
-      wb = openpyxl.load_workbook(worksheet_path, data_only=True)
-      worksheet = wb[worksheet_name]
-      total_kwh_saved = worksheet.cell(row=len(reader) + 2, column=2).value
-      num_outages = worksheet.cell(row=len(reader) + 4, column=2).value
-      genset_fuel_savings = worksheet.cell(row=len(reader) + 6, column=2).value
-      outage_savings = worksheet.cell(row=len(reader) + 8, column=2).value
-      total_genset_month_savings = worksheet.cell(row=len(reader) + 10, column=2).value
-      solar_yield = worksheet.cell(row=len(reader) + 12, column=2).value
-      grid_yield = worksheet.cell(row=len(reader) + 14, column=2).value
-      genset_yield = worksheet.cell(row=len(reader) + 16, column=2).value
-      logging.info(f"Read yearly savings for {month} from the worksheet.")
+      try:
+        worksheet_name = f"{site}_{month}_Savings"
+        worksheet_path = f"results/{year}_{site}_Genset_Fuel_Savings.xlsx"
+        wb = openpyxl.load_workbook(worksheet_path, data_only=True)
+        worksheet = wb[worksheet_name]
+        total_kwh_saved = worksheet.cell(row=len(reader) + 2, column=2).value
+        num_outages = worksheet.cell(row=len(reader) + 4, column=2).value
+        genset_fuel_savings = worksheet.cell(row=len(reader) + 6, column=2).value
+        outage_savings = worksheet.cell(row=len(reader) + 8, column=2).value
+        total_genset_month_savings = worksheet.cell(row=len(reader) + 10, column=2).value
+        solar_yield = worksheet.cell(row=len(reader) + 12, column=2).value
+        grid_yield = worksheet.cell(row=len(reader) + 14, column=2).value
+        genset_yield = worksheet.cell(row=len(reader) + 16, column=2).value
+        logging.info(f"Read yearly savings for {month} from the worksheet.")
+      except FileNotFoundError:
+        logging.error(f"File {worksheet_path} not found. Skipping {month}.")
+        continue
+      except KeyError:
+        logging.error(f"Worksheet {worksheet_name} not found in {worksheet_path}. Skipping {month}.")
+        continue
+      except Exception as e:
+        logging.error(f"An error occurred while processing {month}: {e}")
+        continue
 
       summary_worksheet.write(row_idx, 0, month)
       summary_worksheet.write(row_idx, 1, total_kwh_saved)
@@ -232,15 +242,22 @@ class CalculateGensetSavings:
       summary_worksheet.write(row_idx, 8, genset_yield)
       logging.info(f"Written yearly savings for {month} to the summary worksheet.")
 
-      total_kwh_saved_year += float(total_kwh_saved) if total_kwh_saved is not None else 0
-      total_num_outages_year += int(num_outages) if num_outages is not None else 0
-      total_genset_fuel_savings_year += float(genset_fuel_savings) if genset_fuel_savings is not None else 0
-      total_outage_savings_year += float(outage_savings) if outage_savings is not None else 0
-      total_genset_savings_year += float(total_genset_month_savings) if total_genset_month_savings is not None else 0
-      total_solar_yield_year += float(solar_yield) if solar_yield is not None else 0
-      total_grid_yield_year += float(grid_yield) if grid_yield is not None else 0
-      total_genset_yield_year += float(genset_yield) if genset_yield is not None else 0
-      logging.info(f"Updated yearly savings for {month}.")
+      try:
+        total_kwh_saved_year += float(total_kwh_saved) if total_kwh_saved is not None else 0
+        total_num_outages_year += int(num_outages) if num_outages is not None else 0
+        total_genset_fuel_savings_year += float(genset_fuel_savings) if genset_fuel_savings is not None else 0
+        total_outage_savings_year += float(outage_savings) if outage_savings is not None else 0
+        total_genset_savings_year += float(total_genset_month_savings) if total_genset_month_savings is not None else 0
+        total_solar_yield_year += float(solar_yield) if solar_yield is not None else 0
+        total_grid_yield_year += float(grid_yield) if grid_yield is not None else 0
+        total_genset_yield_year += float(genset_yield) if genset_yield is not None else 0
+        logging.info(f"Updated yearly savings for {month}.")
+      except ValueError as e:
+        logging.error(f"Value error while updating yearly savings for {month}: {e}")
+      except TypeError as e:
+        logging.error(f"Type error while updating yearly savings for {month}: {e}")
+      except Exception as e:
+        logging.error(f"Unexpected error while updating yearly savings for {month}: {e}")
 
     summary_worksheet.write(len(self.months_list) + 1, 0, "Yearly Totals")
     summary_worksheet.write(len(self.months_list) + 1, 1, total_kwh_saved_year)
