@@ -17,9 +17,9 @@ class CalculateGensetSavings:
       "January", "February", "March", "April", "May", "June",
       "July", "August", "September", "October", "November", "December"
     ]
-    self.solar_yield_data = self.load_yield_data("Solar-Energy-Yield-Month.csv", "Solar Energy Yield Month")
-    self.grid_yield_data = self.load_yield_data("Grid-Energy-Yield-Month.csv", "Grid Energy Yield Month")
-    self.genset_yield_data = self.load_yield_data("Genset-Energy-Yield-Month.csv", "Genset Energy Yield Month")
+    self.solar_yield_data = self.load_yield_data("Solar-Energy-Yield-Month.csv", "Solar_Energy_Yield_Month")
+    self.grid_yield_data = self.load_yield_data("Grid-Energy-Yield-Month.csv", "Grid_Energy_Yield_Month")
+    self.genset_yield_data = self.load_yield_data("Genset-Energy-Yield-Month.csv", "Genset_Energy_Yield_Month")
 
   def load_config(self) -> Dict:
     """Load configuration from a JSON file."""
@@ -87,7 +87,7 @@ class CalculateGensetSavings:
         writer.writerows(filtered_data)
       logging.info(f"Removed rows with 'Time Elapsed (minutes)' < 1 from {file_path}.")
 
-  def load_yield_data(self, filename: str, yield_column: str) -> Dict[str, str]:
+  def load_yield_data(self, filename: str, yield_column: str) -> Dict[str, float]:
     """Load yield data from CSV file."""
     year = self.config["year"]
     yield_file = Path(f"data/yield_data/{year}/{filename}")
@@ -97,11 +97,18 @@ class CalculateGensetSavings:
     with open(yield_file, mode='r', newline='') as infile:
       reader = csv.DictReader(infile)
       fieldnames = [field.strip() for field in reader.fieldnames]
-      if 'Category' not in fieldnames or yield_column not in fieldnames:
-        logging.error(f"Required columns not found in {yield_file}. Skipping.")
-        return {}
-      yield_data = {row["Category"]: row[yield_column] for row in reader}
-    return yield_data
+      expected_columns = ["Category", yield_column]
+      for col in expected_columns:
+        if col not in fieldnames:
+          logging.error(f"'{col}' column not found in {yield_file}. Skipping.")
+          return {}
+      yield_data = {}
+      for row in reader:
+        try:
+          yield_data[row["Category"]] = float(row[yield_column])
+        except ValueError:
+          logging.warning(f"Invalid data for {row['Category']} in {filename}. Skipping.")
+      return yield_data
 
   def calculate_genset_savings(self) -> None:
     """Copy CSV data of each month into the XLSX file and calculate savings."""
