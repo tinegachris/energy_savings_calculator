@@ -186,9 +186,9 @@ class CalculateGensetSavings:
 
   def _calculate_costs(self, total_kwh_saved: float, num_outages: int) -> Tuple[float, float, float]:
     """Calculate genset fuel savings, outage savings, and total month genset savings."""
-    cost_fuel_plus_MTCE = self.config["cost_fuel_plus_MTCE"]
+    cost_fuel_plus_MTCE = self.config["genset_fuel"]["cost_fuel_plus_MTCE"]
     genset_fuel_savings = total_kwh_saved * cost_fuel_plus_MTCE
-    cost_per_outage = self.config["cost_per_outage"]
+    cost_per_outage = self.config["genset_fuel"]["cost_per_outage"]
     outage_savings = num_outages * cost_per_outage
     total_month_genset_savings = genset_fuel_savings + outage_savings
     return genset_fuel_savings, outage_savings, total_month_genset_savings
