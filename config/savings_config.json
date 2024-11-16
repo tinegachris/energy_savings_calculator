@@ -1,17 +1,44 @@
 {
   "country": "KE",
-  "site": "MVT",
+  "site": "test_site",
   "year": 2024,
   "currency": "USD",
-  "cost_fuel_plus_MTCE": 0.30,
-  "cost_per_outage": 500,
   "cost_per_kWh": 0.15,
   "site_capacity": 1000,
   "site_voltage": 400,
   "site_frequency": 50,
-  "site_power_factor": 0.93,
-  "calculation_parameters": {
-    "discount_rate": 0,
-    "inflation_rate": 0
+  "site_power_factor": 0.90,
+  "site_load_factor": 0.8,
+  "harmonics": {
+    "acceptable_THD_V": 5,
+    "acceptable_THD_I": 5,
+    "loss_factor_k": 0.5,
+    "annual_maintenance_cost": 0.05,
+    "penalty_rate": 0.1
+  },
+  "voltage_stability": {
+    "nominal_voltage": 415,
+    "voltage_tolerance": 0.05,
+    "cost_per_kWh_mismatch": 0.15,
+    "efficiency_derate_per_percent_deviation": 0.01,
+    "voltage_penalty": 0.1
+  },
+  "frequency_deviation": {
+    "nominal_frequency": 50,
+    "tolerable_deviation": 0.1,
+    "cost_per_Hz_deviation": 0.05,
+    "maintenance_cost_increase_per_Hz": 0.02,
+    "downtime_cost_per_Hz": 100,
+    "penalty_rate": 0.1
+  },
+  "power_factor": {
+    "target_power_factor": 0.95,
+    "cost_per_kVARh": 0.05,
+    "penalty_threshold": 0.90,
+    "penalty_rate": 0.1
+  },
+  "genset_fuel": {
+    "cost_fuel_plus_MTCE": 0.30,
+    "cost_per_outage": 50.00
   }
 }
