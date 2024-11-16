@@ -1,8 +1,17 @@
 # Genset Savings Calculator
 
+[![Github license](https://img.shields.io/github/license/tinegachris/genset_savings_calculator.svg)](https://github.com/tinegachris/genset_savings_calculator/blob/main/LICENSE)
+[![GitHub contributors](https://img.shields.io/github/contributors/tinegachris/genset_savings_calculator.svg)](https://github.com/tinegachris/genset_savings_calculator/graphs/contributors)
+[![GitHub issues](https://img.shields.io/github/issues/tinegachris/genset_savings_calculator.svg)](https://github.com/tinegachris/genset_savings_calculator/issues)
+[![GitHub pull-requests](https://img.shields.io/github/issues-pr/tinegachris/genset_savings_calculator.svg)](https://github.com/tinegachris/genset_savings_calculator/pulls)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
+[![GitHub watchers](https://img.shields.io/github/watchers/tinegachris/genset_savings_calculator.svg?style=social&label=Watch)](https://github.com/tinegachris/genset_savings_calculator/watchers)
+[![GitHub forks](https://img.shields.io/github/forks/tinegachris/genset_savings_calculator.svg?style=social&label=Fork)](https://github.com/tinegachris/genset_savings_calculator/network/members)
+[![GitHub stars](https://img.shields.io/github/stars/tinegachris/genset_savings_calculator.svg?style=social&label=Star)](https://github.com/tinegachris/genset_savings_calculator/stargazers)
+
 This project calculates genset fuel savings from CSV files and generates a summary in an Excel file.
 
-![alt text](<DALL·E 2024-11-16 13.09.33 - A visually appealing header image representing fuel savings and renewable energy integration. The image should feature a clean energy concept with sol.webp>)
+![A visually appealing header image representing fuel savings and renewable energy integration. The image should feature a clean energy concept with solar panels, a genset (generator) emitting minimal exhaust, and a graph overlay showing energy savings. The background includes a blue sky and greenery, symbolizing sustainability. Incorporate a professional design suitable for technical documentation, with a focus on clarity and innovation.](Savings_Calculator_Header_Image.jpg)
 
 ## Project Structure
 
