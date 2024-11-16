@@ -90,7 +90,7 @@ class CalculateGensetSavings:
   def load_yield_data(self, filename: str, yield_column: str) -> Dict[str, str]:
     """Load yield data from CSV file."""
     year = self.config["year"]
-    yield_file = Path(f"data/yield_data{year}/{filename}")
+    yield_file = Path(f"data/yield_data/{year}/{filename}")
     if not yield_file.exists():
       logging.warning(f"{filename} does not exist. Skipping.")
       return {}
