@@ -1,7 +1,6 @@
 import json
 import csv
 from pathlib import Path
-import os
 import sys
 from typing import Dict, List, Tuple, Optional
 import xlsxwriter
