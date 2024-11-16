@@ -118,43 +118,75 @@ class CalculateGensetSavings:
     logging.info(f"Created summary worksheet: {site}_{year}_Savings_Summary.")
 
     for month in self.months_list:
-      worksheet = workbook.add_worksheet(f"{site}_{month}_Savings")
-      file_path = Path(f"data/genset_savings_data/{year}/{month}-Genset-Savings.csv")
-      if not file_path.exists():
-        logging.warning(f"{file_path} does not exist. Skipping.")
-        continue
-      with open(file_path, mode='r', newline='') as infile:
-        reader = list(csv.reader(infile))
-        for row_idx, row in enumerate(reader):
-          for col_idx, cell in enumerate(row):
-            try:
-              number = float(cell) if '.' in cell else int(cell)
-              worksheet.write_number(row_idx, col_idx, number)
-            except ValueError:
-              worksheet.write(row_idx, col_idx, cell)
-      logging.info(f"Copied data from {file_path} to {file_name} in sheet {site}_{month}_Savings.")
-      self._write_calculations_to_worksheet(worksheet, reader, month)
+      self._process_month_data(workbook, month)
+
     self._calculate_year_genset_savings(workbook)
     workbook.close()
     logging.info(f"Completed calculating genset savings and writing: {file_name}")
 
+  def _process_month_data(self, workbook: xlsxwriter.Workbook, month: str) -> None:
+    """Process data for a specific month and write to the workbook."""
+    year = self.config["year"]
+    site = self.config["site"]
+    worksheet = workbook.add_worksheet(f"{site}_{month}_Savings")
+    file_path = Path(f"data/genset_savings_data/{year}/{month}-Genset-Savings.csv")
+    if not file_path.exists():
+      logging.warning(f"{file_path} does not exist. Skipping.")
+      return
+
+    with open(file_path, mode='r', newline='') as infile:
+      reader = list(csv.reader(infile))
+      for row_idx, row in enumerate(reader):
+        for col_idx, cell in enumerate(row):
+          self._write_cell(worksheet, row_idx, col_idx, cell)
+      logging.info(f"Copied data from {file_path} to {worksheet.name}.")
+
+    self._write_calculations_to_worksheet(worksheet, reader, month)
+
+  def _write_cell(self, worksheet: xlsxwriter.Workbook.worksheet_class, row_idx: int, col_idx: int, cell: str) -> None:
+    """Write a cell to the worksheet, handling numbers appropriately."""
+    try:
+      number = float(cell) if '.' in cell else int(cell)
+      worksheet.write_number(row_idx, col_idx, number)
+    except ValueError:
+      worksheet.write(row_idx, col_idx, cell)
+
   def _write_calculations_to_worksheet(self, worksheet: xlsxwriter.Workbook.worksheet_class, reader: List[List[str]], month: str) -> None:
     """Write calculations to the worksheet."""
-    energy_saving_col_idx = None
-    for col_idx, col_name in enumerate(reader[0]):
-      if col_name == "Energy Saving (kWh)":
-        energy_saving_col_idx = col_idx
-        break
+    energy_saving_col_idx = self._get_column_index(reader[0], "Energy Saving (kWh)")
     if energy_saving_col_idx is None:
       logging.warning(f"Energy Saving (kWh) column not found in {month}-Genset-Savings.csv. Skipping calculations.")
       return
+
+    total_kwh_saved, num_outages = self._calculate_savings(reader, energy_saving_col_idx)
+    genset_fuel_savings, outage_savings, total_month_genset_savings = self._calculate_costs(total_kwh_saved, num_outages)
+    self._write_savings_to_worksheet(worksheet, reader, total_kwh_saved, num_outages, genset_fuel_savings, outage_savings, total_month_genset_savings, month)
+    self._adjust_column_widths(worksheet, reader)
+
+  def _get_column_index(self, header: List[str], column_name: str) -> Optional[int]:
+    """Get the index of a column in the header."""
+    for col_idx, col_name in enumerate(header):
+      if col_name == column_name:
+        return col_idx
+    return None
+
+  def _calculate_savings(self, reader: List[List[str]], energy_saving_col_idx: int) -> Tuple[float, int]:
+    """Calculate total kWh saved and number of outages."""
     total_kwh_saved = sum(float(row[energy_saving_col_idx]) for row in reader[1:] if row[energy_saving_col_idx])
     num_outages = len([row for row in reader[1:] if row[energy_saving_col_idx]]) - 1
+    return total_kwh_saved, num_outages
+
+  def _calculate_costs(self, total_kwh_saved: float, num_outages: int) -> Tuple[float, float, float]:
+    """Calculate genset fuel savings, outage savings, and total month genset savings."""
     cost_fuel_plus_MTCE = self.config["cost_fuel_plus_MTCE"]
     genset_fuel_savings = total_kwh_saved * cost_fuel_plus_MTCE
     cost_per_outage = self.config["cost_per_outage"]
     outage_savings = num_outages * cost_per_outage
     total_month_genset_savings = genset_fuel_savings + outage_savings
+    return genset_fuel_savings, outage_savings, total_month_genset_savings
+
+  def _write_savings_to_worksheet(self, worksheet: xlsxwriter.Workbook.worksheet_class, reader: List[List[str]], total_kwh_saved: float, num_outages: int, genset_fuel_savings: float, outage_savings: float, total_month_genset_savings: float, month: str) -> None:
+    """Write savings data to the worksheet."""
     worksheet.write(len(reader) + 1, 0, "Total kWh Saved")
     worksheet.write(len(reader) + 1, 1, total_kwh_saved)
     worksheet.write(len(reader) + 3, 0, "Number of Outages")
@@ -173,106 +205,128 @@ class CalculateGensetSavings:
     worksheet.write(len(reader) + 15, 1, self.genset_yield_data.get(month, 0))
     logging.info(f"Calculated genset savings for {month}.")
 
+  def _adjust_column_widths(self, worksheet: xlsxwriter.Workbook.worksheet_class, reader: List[List[str]]) -> None:
+    """Adjust the column widths based on the content."""
     for col_idx, col_name in enumerate(reader[0]):
       max_len = max(len(str(cell)) for cell in [col_name] + [row[col_idx] for row in reader[1:]])
       worksheet.set_column(col_idx, col_idx, max_len + 2)
-    logging.info(f"Calculated genset savings for {month} and written to the worksheet.")
+    logging.info(f"Adjusted column widths for worksheet {worksheet.name}.")
 
   def _calculate_year_genset_savings(self, workbook: xlsxwriter.Workbook) -> None:
     """Calculate yearly savings and update the summary worksheet."""
     site = self.config["site"]
     year = self.config["year"]
-    summary_worksheet = workbook.get_worksheet_by_name(f"{self.config['site']}_{self.config['year']}_Savings_Summary")
+    summary_worksheet = workbook.get_worksheet_by_name(f"{site}_{year}_Savings_Summary")
     logging.info(f"Opened summary worksheet: {site}_{year}_Savings_Summary.")
 
-    summary_worksheet.write(0, 0, "Month")
-    summary_worksheet.write(0, 1, "Total kWh Saved")
-    summary_worksheet.write(0, 2, "Number of Outages")
-    summary_worksheet.write(0, 3, "Genset Fuel Savings")
-    summary_worksheet.write(0, 4, "Outage Savings")
-    summary_worksheet.write(0, 5, "Total Month Genset Savings")
-    summary_worksheet.write(0, 6, "Solar Yield")
-    summary_worksheet.write(0, 7, "Grid Yield")
-    summary_worksheet.write(0, 8, "Genset Yield")
+    self._write_summary_headers(summary_worksheet)
+    self._aggregate_yearly_savings(summary_worksheet)
 
-    logging.info(f"Started calculating yearly savings and writing to summary worksheet.")
+  def _write_summary_headers(self, summary_worksheet: xlsxwriter.Workbook.worksheet_class) -> None:
+    """Write headers to the summary worksheet."""
+    headers = ["Month", "Total kWh Saved", "Number of Outages", "Genset Fuel Savings", "Outage Savings", "Total Month Genset Savings", "Solar Yield", "Grid Yield", "Genset Yield"]
+    for col_idx, header in enumerate(headers):
+      summary_worksheet.write(0, col_idx, header)
+    logging.info("Written headers to summary worksheet.")
 
-    total_kwh_saved_year = 0
-    total_num_outages_year = 0
-    total_genset_fuel_savings_year = 0
-    total_outage_savings_year = 0
-    total_solar_yield_year = 0
-    total_grid_yield_year = 0
-    total_genset_yield_year = 0
-    total_genset_savings_year = 0
+  def _aggregate_yearly_savings(self, summary_worksheet: xlsxwriter.Workbook.worksheet_class) -> None:
+    """Aggregate yearly savings and write to the summary worksheet."""
+    totals = {
+      "total_kwh_saved_year": 0,
+      "total_num_outages_year": 0,
+      "total_genset_fuel_savings_year": 0,
+      "total_outage_savings_year": 0,
+      "total_solar_yield_year": 0,
+      "total_grid_yield_year": 0,
+      "total_genset_yield_year": 0,
+      "total_genset_savings_year": 0
+    }
 
     for row_idx, month in enumerate(self.months_list, start=1):
-      worksheet_path = f"results/{year}_{site}_Genset_Fuel_Savings.xlsx"
-      worksheet_name = f"{site}_{month}_Savings"
-      try:
-        reader = []
-        with open(f"data/genset_savings_data/{year}/{month}-Genset-Savings.csv", mode='r', newline='') as infile:
-          reader = list(csv.reader(infile))
-        wb = openpyxl.load_workbook(worksheet_path, data_only=True)
-        worksheet = wb[worksheet_name]
-        total_kwh_saved = worksheet.cell(row=len(reader) + 2, column=2).value
-        num_outages = worksheet.cell(row=len(reader) + 4, column=2).value
-        genset_fuel_savings = worksheet.cell(row=len(reader) + 6, column=2).value
-        outage_savings = worksheet.cell(row=len(reader) + 8, column=2).value
-        total_genset_month_savings = worksheet.cell(row=len(reader) + 10, column=2).value
-        solar_yield = worksheet.cell(row=len(reader) + 12, column=2).value
-        grid_yield = worksheet.cell(row=len(reader) + 14, column=2).value
-        genset_yield = worksheet.cell(row=len(reader) + 16, column=2).value
-        logging.info(f"Read yearly savings for {month} from the worksheet.")
-      except FileNotFoundError:
-        logging.error(f"File {worksheet_path} not found. Skipping {month}.")
-        continue
-      except KeyError:
-        logging.error(f"Worksheet {worksheet_name} not found in {worksheet_path}. Skipping {month}.")
-        continue
-      except Exception as e:
-        logging.error(f"An error occurred while processing {month}: {e}")
-        continue
+      self._process_month_summary(summary_worksheet, row_idx, month, totals)
 
-      summary_worksheet.write(row_idx, 0, month)
-      summary_worksheet.write(row_idx, 1, total_kwh_saved)
-      summary_worksheet.write(row_idx, 2, num_outages)
-      summary_worksheet.write(row_idx, 3, genset_fuel_savings)
-      summary_worksheet.write(row_idx, 4, outage_savings)
-      summary_worksheet.write(row_idx, 5, total_genset_month_savings)
-      summary_worksheet.write(row_idx, 6, solar_yield)
-      summary_worksheet.write(row_idx, 7, grid_yield)
-      summary_worksheet.write(row_idx, 8, genset_yield)
-      logging.info(f"Written yearly savings for {month} to the summary worksheet.")
+    self._write_yearly_totals(summary_worksheet, totals)
 
-      try:
-        total_kwh_saved_year += float(total_kwh_saved) if total_kwh_saved is not None else 0
-        total_num_outages_year += int(num_outages) if num_outages is not None else 0
-        total_genset_fuel_savings_year += float(genset_fuel_savings) if genset_fuel_savings is not None else 0
-        total_outage_savings_year += float(outage_savings) if outage_savings is not None else 0
-        total_genset_savings_year += float(total_genset_month_savings) if total_genset_month_savings is not None else 0
-        total_solar_yield_year += float(solar_yield) if solar_yield is not None else 0
-        total_grid_yield_year += float(grid_yield) if grid_yield is not None else 0
-        total_genset_yield_year += float(genset_yield) if genset_yield is not None else 0
-        logging.info(f"Updated yearly savings for {month}.")
-      except ValueError as e:
-        logging.error(f"Value error while updating yearly savings for {month}: {e}")
-      except TypeError as e:
-        logging.error(f"Type error while updating yearly savings for {month}: {e}")
-      except Exception as e:
-        logging.error(f"Unexpected error while updating yearly savings for {month}: {e}")
+  def _process_month_summary(self, summary_worksheet: xlsxwriter.Workbook.worksheet_class, row_idx: int, month: str, totals: Dict[str, float]) -> None:
+    """Process and write the summary for a specific month."""
+    year = self.config["year"]
+    site = self.config["site"]
+    worksheet_path = f"results/{year}_{site}_Genset_Fuel_Savings.xlsx"
+    worksheet_name = f"{site}_{month}_Savings"
 
-    summary_worksheet.write(len(self.months_list) + 1, 0, "Yearly Totals")
-    summary_worksheet.write(len(self.months_list) + 1, 1, total_kwh_saved_year)
-    summary_worksheet.write(len(self.months_list) + 1, 2, total_num_outages_year)
-    summary_worksheet.write(len(self.months_list) + 1, 3, total_genset_fuel_savings_year)
-    summary_worksheet.write(len(self.months_list) + 1, 4, total_outage_savings_year)
-    summary_worksheet.write(len(self.months_list) + 1, 5, total_genset_savings_year)
-    summary_worksheet.write(len(self.months_list) + 1, 6, total_solar_yield_year)
-    summary_worksheet.write(len(self.months_list) + 1, 7, total_grid_yield_year)
-    summary_worksheet.write(len(self.months_list) + 1, 8, total_genset_yield_year)
+    try:
+      reader = []
+      with open(f"data/genset_savings_data/{year}/{month}-Genset-Savings.csv", mode='r', newline='') as infile:
+        reader = list(csv.reader(infile))
+      wb = openpyxl.load_workbook(worksheet_path, data_only=True)
+      worksheet = wb[worksheet_name]
+      month_data = self._read_month_data(worksheet, reader)
+      self._write_month_summary(summary_worksheet, row_idx, month, month_data)
+      self._update_yearly_totals(totals, month_data)
+      logging.info(f"Processed and written summary for {month}.")
+    except FileNotFoundError:
+      logging.error(f"File {worksheet_path} not found. Skipping {month}.")
+    except KeyError:
+      logging.error(f"Worksheet {worksheet_name} not found in {worksheet_path}. Skipping {month}.")
+    except Exception as e:
+      logging.error(f"An error occurred while processing {month}: {e}")
 
-    logging.info(f"Completed calculating yearly savings and writing to summary worksheet.")
+  def _read_month_data(self, worksheet: openpyxl.worksheet.worksheet.Worksheet, reader: List[List[str]]) -> Dict[str, float]:
+    """Read month data from the worksheet."""
+    return {
+      "total_kwh_saved": worksheet.cell(row=len(reader) + 2, column=2).value,
+      "num_outages": worksheet.cell(row=len(reader) + 4, column=2).value,
+      "genset_fuel_savings": worksheet.cell(row=len(reader) + 6, column=2).value,
+      "outage_savings": worksheet.cell(row=len(reader) + 8, column=2).value,
+      "total_genset_month_savings": worksheet.cell(row=len(reader) + 10, column=2).value,
+      "solar_yield": worksheet.cell(row=len(reader) + 12, column=2).value,
+      "grid_yield": worksheet.cell(row=len(reader) + 14, column=2).value,
+      "genset_yield": worksheet.cell(row=len(reader) + 16, column=2).value
+    }
+
+  def _write_month_summary(self, summary_worksheet: xlsxwriter.Workbook.worksheet_class, row_idx: int, month: str, month_data: Dict[str, float]) -> None:
+    """Write the summary for a specific month."""
+    summary_worksheet.write(row_idx, 0, month)
+    summary_worksheet.write(row_idx, 1, month_data["total_kwh_saved"])
+    summary_worksheet.write(row_idx, 2, month_data["num_outages"])
+    summary_worksheet.write(row_idx, 3, month_data["genset_fuel_savings"])
+    summary_worksheet.write(row_idx, 4, month_data["outage_savings"])
+    summary_worksheet.write(row_idx, 5, month_data["total_genset_month_savings"])
+    summary_worksheet.write(row_idx, 6, month_data["solar_yield"])
+    summary_worksheet.write(row_idx, 7, month_data["grid_yield"])
+    summary_worksheet.write(row_idx, 8, month_data["genset_yield"])
+
+  def _update_yearly_totals(self, totals: Dict[str, float], month_data: Dict[str, float]) -> None:
+    """Update the yearly totals with the data from a specific month."""
+    try:
+      totals["total_kwh_saved_year"] += float(month_data["total_kwh_saved"]) if month_data["total_kwh_saved"] is not None else 0
+      totals["total_num_outages_year"] += int(month_data["num_outages"]) if month_data["num_outages"] is not None else 0
+      totals["total_genset_fuel_savings_year"] += float(month_data["genset_fuel_savings"]) if month_data["genset_fuel_savings"] is not None else 0
+      totals["total_outage_savings_year"] += float(month_data["outage_savings"]) if month_data["outage_savings"] is not None else 0
+      totals["total_genset_savings_year"] += float(month_data["total_genset_month_savings"]) if month_data["total_genset_month_savings"] is not None else 0
+      totals["total_solar_yield_year"] += float(month_data["solar_yield"]) if month_data["solar_yield"] is not None else 0
+      totals["total_grid_yield_year"] += float(month_data["grid_yield"]) if month_data["grid_yield"] is not None else 0
+      totals["total_genset_yield_year"] += float(month_data["genset_yield"]) if month_data["genset_yield"] is not None else 0
+    except ValueError as e:
+      logging.error(f"Value error while updating yearly totals: {e}")
+    except TypeError as e:
+      logging.error(f"Type error while updating yearly totals: {e}")
+    except Exception as e:
+      logging.error(f"Unexpected error while updating yearly totals: {e}")
+
+  def _write_yearly_totals(self, summary_worksheet: xlsxwriter.Workbook.worksheet_class, totals: Dict[str, float]) -> None:
+    """Write the yearly totals to the summary worksheet."""
+    row_idx = len(self.months_list) + 1
+    summary_worksheet.write(row_idx, 0, "Yearly Totals")
+    summary_worksheet.write(row_idx, 1, totals["total_kwh_saved_year"])
+    summary_worksheet.write(row_idx, 2, totals["total_num_outages_year"])
+    summary_worksheet.write(row_idx, 3, totals["total_genset_fuel_savings_year"])
+    summary_worksheet.write(row_idx, 4, totals["total_outage_savings_year"])
+    summary_worksheet.write(row_idx, 5, totals["total_genset_savings_year"])
+    summary_worksheet.write(row_idx, 6, totals["total_solar_yield_year"])
+    summary_worksheet.write(row_idx, 7, totals["total_grid_yield_year"])
+    summary_worksheet.write(row_idx, 8, totals["total_genset_yield_year"])
+    logging.info("Written yearly totals to summary worksheet.")
 
 if __name__ == "__main__":
   config_file = "config/savings_config.json"
