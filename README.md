@@ -48,4 +48,4 @@ The output will be an Excel file saved in the `results/` directory, containing a
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the BSD 2-Clause License. See the [LICENSE](LICENSE) file for details.
