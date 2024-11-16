@@ -134,7 +134,7 @@ class CalculateGensetSavings:
               worksheet.write(row_idx, col_idx, cell)
       logging.info(f"Copied data from {file_path} to {file_name} in sheet {site}_{month}_Savings.")
       self._write_calculations_to_worksheet(worksheet, reader, month)
-    self._calculate_year_genset_savings(workbook, reader)
+    self._calculate_year_genset_savings(workbook)
     workbook.close()
     logging.info(f"Completed calculating genset savings and writing: {file_name}")
 
@@ -178,7 +178,7 @@ class CalculateGensetSavings:
       worksheet.set_column(col_idx, col_idx, max_len + 2)
     logging.info(f"Calculated genset savings for {month} and written to the worksheet.")
 
-  def _calculate_year_genset_savings(self, workbook: xlsxwriter.Workbook, reader: List[List[str]]) -> None:
+  def _calculate_year_genset_savings(self, workbook: xlsxwriter.Workbook) -> None:
     """Calculate yearly savings and update the summary worksheet."""
     site = self.config["site"]
     year = self.config["year"]
@@ -207,9 +207,12 @@ class CalculateGensetSavings:
     total_genset_savings_year = 0
 
     for row_idx, month in enumerate(self.months_list, start=1):
+      worksheet_path = f"results/{year}_{site}_Genset_Fuel_Savings.xlsx"
+      worksheet_name = f"{site}_{month}_Savings"
       try:
-        worksheet_name = f"{site}_{month}_Savings"
-        worksheet_path = f"results/{year}_{site}_Genset_Fuel_Savings.xlsx"
+        reader = []
+        with open(f"data/genset_savings_data/{year}/{month}-Genset-Savings.csv", mode='r', newline='') as infile:
+          reader = list(csv.reader(infile))
         wb = openpyxl.load_workbook(worksheet_path, data_only=True)
         worksheet = wb[worksheet_name]
         total_kwh_saved = worksheet.cell(row=len(reader) + 2, column=2).value
