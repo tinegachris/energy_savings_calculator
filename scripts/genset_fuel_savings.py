@@ -95,19 +95,21 @@ class CalculateGensetSavings:
       logging.warning(f"{filename} does not exist. Skipping.")
       return {}
     with open(yield_file, mode='r', newline='') as infile:
-      reader = csv.DictReader(infile)
-      fieldnames = [field.strip() for field in reader.fieldnames]
-      expected_columns = ["Category", yield_column]
-      for col in expected_columns:
-        if col not in fieldnames:
-          logging.error(f"'{col}' column not found in {yield_file}. Skipping.")
-          return {}
+      reader = csv.reader(infile)
+      headers = next(reader)
+      try:
+        category_idx = 0
+        yield_idx = headers.index(yield_column)
+      except ValueError:
+        logging.error(f"Required columns not found in {yield_file}. Skipping.")
+        return {}
       yield_data = {}
       for row in reader:
         try:
-          yield_data[row["Category"]] = float(row[yield_column])
+          yield_data[row[category_idx]] = float(row[yield_idx])
         except ValueError:
-          logging.warning(f"Invalid data for {row['Category']} in {filename}. Skipping.")
+          logging.warning(f"Invalid data for {row[category_idx]} in {filename}. Skipping.")
+      logging.info(f"Loaded {filename}.")
       return yield_data
 
   def calculate_genset_savings(self) -> None:
