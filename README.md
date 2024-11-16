@@ -1,4 +1,4 @@
-# Genset Savings Calculator
+# Energy Savings Calculator
 
 [![Github license](https://img.shields.io/github/license/tinegachris/genset_savings_calculator.svg)](https://github.com/tinegachris/genset_savings_calculator/blob/main/LICENSE)
 [![GitHub contributors](https://img.shields.io/github/contributors/tinegachris/genset_savings_calculator.svg)](https://github.com/tinegachris/genset_savings_calculator/graphs/contributors)
@@ -9,23 +9,33 @@
 [![GitHub forks](https://img.shields.io/github/forks/tinegachris/genset_savings_calculator.svg?style=social&label=Fork)](https://github.com/tinegachris/genset_savings_calculator/network/members)
 [![GitHub stars](https://img.shields.io/github/stars/tinegachris/genset_savings_calculator.svg?style=social&label=Star)](https://github.com/tinegachris/genset_savings_calculator/stargazers)
 
-This project calculates genset fuel savings from CSV files and generates a summary in an Excel file.
-
 ![A visually appealing header image representing fuel savings and renewable energy integration. The image should feature a clean energy concept with solar panels, a genset (generator) emitting minimal exhaust, and a graph overlay showing energy savings. The background includes a blue sky and greenery, symbolizing sustainability. Incorporate a professional design suitable for technical documentation, with a focus on clarity and innovation.](Savings_Calculator_Header_Image.jpg)
+
+## Project Overview
+
+This project calculates energy savings from EMS data using CSV data and generates a summary in an Excel file. It processes monthly data to compute savings and aggregates yearly totals.
 
 ## Project Structure
 
-- `scripts/genset_fuel_savings.py`: Main script for calculating genset savings.
+- `scripts/`: Directory containing the scripts used for calculating savings from the data.
+  - `genset_fuel_savings.py`: Script for calculating genset fuel savings.
+  - `power_factor_savings.py`: Script for calculating power factor savings.
+  - `frequency_savings.py`: Script for calculating power factor savings.
+  - `voltage_stability_savings.py`: Script for calculating power factor savings.
+  - `harmonics_savings.py`: Script for calculating power factor savings.
 - `config/savings_config.json`: Configuration file containing year, site, and cost details.
-- `data/genset_savings_data/`: Directory containing monthly genset savings CSV files.
-- `data/yield_data/`: Directory containing yield data CSV files.
-- `results/`: Directory where the output Excel file will be saved.
+- `data/`: Directory containing the CSV data files.
+  - `genset_savings_data/`: Directory containing genset savings data.
+  - `power_factor_savings_data/`: Directory containing power factor savings data.
+  - `frequency_data/`: Directory containing yield data.
+  - `voltage_data/`: Directory containing yield data.
+  - `harmonics_data/`: Directory containing yield data.
+  - `yield_data/`: Directory containing yield data.
 
 ## Requirements
 
 - Python 3.x
-- `xlsxwriter` library
-- `openpyxl` library
+- A `requirements.txt` file is included in the repository, listing all the necessary Python libraries and dependencies needed to run the scripts.
 
 ## Installation
 
@@ -38,16 +48,25 @@ This project calculates genset fuel savings from CSV files and generates a summa
 
 2. Install the required libraries:
 
+- You can install the required libraries using the following command:
+
   ```sh
   pip install -r requirements.txt
+  ```
+
+- Make sure your Python environment is properly set up and activated before installing the dependencies.
+
+- If you add new dependencies, update the `requirements.txt` file by running:
+
+  ```sh
+  pip freeze > requirements.txt
   ```
 
 ## Usage
 
 1. Update the configuration file `config/savings_config.json` with the appropriate details.
-2. Place the monthly genset savings CSV files in the `data/genset_savings_data/` directory.
-3. Place the yield data CSV files in the `data/yield_data/` directory.
-4. Run the main script:
+2. Place the monthly savings CSV files in the `data/[savings_data]/` directory.
+3. Run the main script:
 
   ```sh
   python scripts/genset_fuel_savings.py
@@ -55,7 +74,18 @@ This project calculates genset fuel savings from CSV files and generates a summa
 
 ## Output
 
-The output will be an Excel file saved in the `results/` directory, containing a summary of the genset fuel savings.
+The output will be an Excel file saved in the `results/` directory, containing a summary of the savings calculated.
+
+## Contributing
+
+If you have an idea for an improvement or have found a bug, please open an issue or submit a pull request. For major changes, please open an issue first to discuss what you would like to change.
+
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature-branch`).
+3. Make your changes.
+4. Commit your changes (`git commit -am 'Add new feature'`).
+5. Push to the branch (`git push origin feature-branch`).
+6. Open a pull request.
 
 ## License
 
