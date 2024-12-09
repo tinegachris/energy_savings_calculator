@@ -6,6 +6,7 @@ from typing import Dict, List, Tuple, Optional
 import xlsxwriter
 import openpyxl
 import logging
+import datetime
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -67,8 +68,39 @@ class CalculateGensetSavings:
         writer.writerows(data)
       logging.info(f"Removed 'Conditions Met' column and empty rows from {file_path}.")
 
+  def _parse_time(self, time_str: str) -> datetime:
+    """Parse a time string into a datetime object."""
+    return datetime.strptime(time_str, "%H:%M:%S")
+
+  def remove_close_time_entries(self) -> None:
+    """Filter out rows that are too close in time to the previous row, keeping only those that are spaced by at least 6 minutes from the CSV files."""
+    for month in self.months_list:
+      file_path = Path(f"data/genset_savings_data/{self.config['year']}/{month}-Genset-Savings.csv")
+      if not file_path.exists():
+        logging.warning(f"{month}-Genset-Savings.csv does not exist.")
+        continue
+      filtered_data = []
+      with open(file_path, mode='r', newline='') as infile:
+        reader = csv.DictReader(infile)
+        fieldnames = reader.fieldnames
+        prev_time = None
+        for row in reader:
+          current_time = self._parse_time(row["Time Initiated"])
+          if prev_time is not None:
+            time_diff = (current_time - prev_time).total_seconds() / 60
+            if time_diff >= 6:
+              filtered_data.append(row)
+          else:
+            filtered_data.append(row)
+          prev_time = current_time
+      with open(file_path, mode='w', newline='') as outfile:
+        writer = csv.DictWriter(outfile, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(filtered_data)
+      logging.info(f"Removed rows with 'Time Initiated' - previous row's 'Time Initiated' < 6 minutes from {file_path}.")
+
   def remove_short_time_entries(self) -> None:
-    """Remove rows with 'Time Elapsed (minutes)' less than 1 from the CSV files."""
+    """Remove rows with 'Time Elapsed (minutes)' less than 1.1 from the CSV files."""
     for month in self.months_list:
       file_path = Path(f"data/genset_savings_data/{self.config['year']}/{month}-Genset-Savings.csv")
       if not file_path.exists():
@@ -79,13 +111,13 @@ class CalculateGensetSavings:
         reader = csv.DictReader(infile)
         fieldnames = reader.fieldnames
         for row in reader:
-          if float(row["Time Elapsed (minutes)"]) >= 1:
+          if float(row["Time Elapsed (minutes)"]) >= 1.1:
             filtered_data.append(row)
       with open(file_path, mode='w', newline='') as outfile:
         writer = csv.DictWriter(outfile, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(filtered_data)
-      logging.info(f"Removed rows with 'Time Elapsed (minutes)' < 1 from {file_path}.")
+      logging.info(f"Removed rows with 'Time Elapsed (minutes)' < 1.1 from {file_path}.")
 
   def load_yield_data(self, filename: str, yield_column: str) -> Dict[str, float]:
     """Load yield data from CSV file."""
@@ -341,5 +373,6 @@ if __name__ == "__main__":
   calculator = CalculateGensetSavings(config_file)
   calculator.confirm_year_folder()
   calculator.clean_month_csv_files()
+  calculator.remove_close_time_entries()
   calculator.remove_short_time_entries()
   calculator.calculate_genset_savings()
