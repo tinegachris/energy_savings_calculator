@@ -336,25 +336,17 @@ class CalculateGensetSavings:
     summary_worksheet.write(row_idx, 7, month_data["grid_yield"])
     summary_worksheet.write(row_idx, 8, month_data["genset_yield"])
 
-  def _is_number(self, value: Optional[str]) -> bool:
-    """Check if the value is a number."""
-    try:
-      float(value)
-      return True
-    except (ValueError, TypeError):
-      return False
-
   def _update_yearly_totals(self, totals: Dict[str, float], month_data: Dict[str, float]) -> None:
     """Update the yearly totals with the data from a specific month."""
     try:
-      totals["total_kwh_saved_year"] += float(month_data["total_kwh_saved"]) if self._is_number(month_data["total_kwh_saved"]) else 0
-      totals["total_num_outages_year"] += int(month_data["num_outages"]) if self._is_number(month_data["num_outages"]) else 0
-      totals["total_genset_fuel_savings_year"] += float(month_data["genset_fuel_savings"]) if self._is_number(month_data["genset_fuel_savings"]) else 0
-      totals["total_outage_savings_year"] += float(month_data["outage_savings"]) if self._is_number(month_data["outage_savings"]) else 0
-      totals["total_genset_savings_year"] += float(month_data["total_genset_month_savings"]) if self._is_number(month_data["total_genset_month_savings"]) else 0
-      totals["total_solar_yield_year"] += float(month_data["solar_yield"]) if self._is_number(month_data["solar_yield"]) else 0
-      totals["total_grid_yield_year"] += float(month_data["grid_yield"]) if self._is_number(month_data["grid_yield"]) else 0
-      totals["total_genset_yield_year"] += float(month_data["genset_yield"]) if self._is_number(month_data["genset_yield"]) else 0
+      totals["total_kwh_saved_year"] += float(month_data["total_kwh_saved"]) if month_data["total_kwh_saved"] is not None else 0
+      totals["total_num_outages_year"] += int(month_data["num_outages"]) if month_data["num_outages"] is not None else 0
+      totals["total_genset_fuel_savings_year"] += float(month_data["genset_fuel_savings"]) if month_data["genset_fuel_savings"] is not None else 0
+      totals["total_outage_savings_year"] += float(month_data["outage_savings"]) if month_data["outage_savings"] is not None else 0
+      totals["total_genset_savings_year"] += float(month_data["total_genset_month_savings"]) if month_data["total_genset_month_savings"] is not None else 0
+      totals["total_solar_yield_year"] += float(month_data["solar_yield"]) if month_data["solar_yield"] is not None else 0
+      totals["total_grid_yield_year"] += float(month_data["grid_yield"]) if month_data["grid_yield"] is not None else 0
+      totals["total_genset_yield_year"] += float(month_data["genset_yield"]) if month_data["genset_yield"] is not None else 0
     except ValueError as e:
       logging.error(f"Value error while updating yearly totals: {e}")
     except TypeError as e:
