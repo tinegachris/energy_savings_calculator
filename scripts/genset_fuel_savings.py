@@ -6,7 +6,7 @@ from typing import Dict, List, Tuple, Optional
 import xlsxwriter
 import openpyxl
 import logging
-import datetime
+from datetime import datetime
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
