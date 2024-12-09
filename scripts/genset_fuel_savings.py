@@ -68,37 +68,6 @@ class CalculateGensetSavings:
         writer.writerows(data)
       logging.info(f"Removed 'Conditions Met' column and empty rows from {file_path}.")
 
-  def _parse_time(self, time_str: str) -> datetime:
-    """Parse a time string into a datetime object."""
-    return datetime.strptime(time_str, "%H:%M:%S")
-
-  def remove_close_time_entries(self) -> None:
-    """Filter out rows that are too close in time to the previous row, keeping only those that are spaced by at least 6 minutes from the CSV files."""
-    for month in self.months_list:
-      file_path = Path(f"data/genset_savings_data/{self.config['year']}/{month}-Genset-Savings.csv")
-      if not file_path.exists():
-        logging.warning(f"{month}-Genset-Savings.csv does not exist.")
-        continue
-      filtered_data = []
-      with open(file_path, mode='r', newline='') as infile:
-        reader = csv.DictReader(infile)
-        fieldnames = reader.fieldnames
-        prev_time = None
-        for row in reader:
-          current_time = self._parse_time(row["Time Initiated"])
-          if prev_time is not None:
-            time_diff = (current_time - prev_time).total_seconds() / 60
-            if time_diff >= 6:
-              filtered_data.append(row)
-          else:
-            filtered_data.append(row)
-          prev_time = current_time
-      with open(file_path, mode='w', newline='') as outfile:
-        writer = csv.DictWriter(outfile, fieldnames=fieldnames)
-        writer.writeheader()
-        writer.writerows(filtered_data)
-      logging.info(f"Removed rows with 'Time Initiated' - previous row's 'Time Initiated' < 6 minutes from {file_path}.")
-
   def remove_short_time_entries(self) -> None:
     """Remove rows with 'Time Elapsed (minutes)' less than 1.1 from the CSV files."""
     for month in self.months_list:
@@ -336,25 +305,17 @@ class CalculateGensetSavings:
     summary_worksheet.write(row_idx, 7, month_data["grid_yield"])
     summary_worksheet.write(row_idx, 8, month_data["genset_yield"])
 
-  def _is_number(self, value: Optional[str]) -> bool:
-    """Check if the value is a number."""
-    try:
-      float(value)
-      return True
-    except (ValueError, TypeError):
-      return False
-
   def _update_yearly_totals(self, totals: Dict[str, float], month_data: Dict[str, float]) -> None:
     """Update the yearly totals with the data from a specific month."""
     try:
-      totals["total_kwh_saved_year"] += float(month_data["total_kwh_saved"]) if self._is_number(month_data["total_kwh_saved"]) else 0
-      totals["total_num_outages_year"] += int(month_data["num_outages"]) if self._is_number(month_data["num_outages"]) else 0
-      totals["total_genset_fuel_savings_year"] += float(month_data["genset_fuel_savings"]) if self._is_number(month_data["genset_fuel_savings"]) else 0
-      totals["total_outage_savings_year"] += float(month_data["outage_savings"]) if self._is_number(month_data["outage_savings"]) else 0
-      totals["total_genset_savings_year"] += float(month_data["total_genset_month_savings"]) if self._is_number(month_data["total_genset_month_savings"]) else 0
-      totals["total_solar_yield_year"] += float(month_data["solar_yield"]) if self._is_number(month_data["solar_yield"]) else 0
-      totals["total_grid_yield_year"] += float(month_data["grid_yield"]) if self._is_number(month_data["grid_yield"]) else 0
-      totals["total_genset_yield_year"] += float(month_data["genset_yield"]) if self._is_number(month_data["genset_yield"]) else 0
+      totals["total_kwh_saved_year"] += float(month_data["total_kwh_saved"]) if month_data["total_kwh_saved"] is not None else 0
+      totals["total_num_outages_year"] += int(month_data["num_outages"]) if month_data["num_outages"] is not None else 0
+      totals["total_genset_fuel_savings_year"] += float(month_data["genset_fuel_savings"]) if month_data["genset_fuel_savings"] is not None else 0
+      totals["total_outage_savings_year"] += float(month_data["outage_savings"]) if month_data["outage_savings"] is not None else 0
+      totals["total_genset_savings_year"] += float(month_data["total_genset_month_savings"]) if month_data["total_genset_month_savings"] is not None else 0
+      totals["total_solar_yield_year"] += float(month_data["solar_yield"]) if month_data["solar_yield"] is not None else 0
+      totals["total_grid_yield_year"] += float(month_data["grid_yield"]) if month_data["grid_yield"] is not None else 0
+      totals["total_genset_yield_year"] += float(month_data["genset_yield"]) if month_data["genset_yield"] is not None else 0
     except ValueError as e:
       logging.error(f"Value error while updating yearly totals: {e}")
     except TypeError as e:
@@ -381,6 +342,5 @@ if __name__ == "__main__":
   calculator = CalculateGensetSavings(config_file)
   calculator.confirm_year_folder()
   calculator.clean_month_csv_files()
-  calculator.remove_close_time_entries()
   calculator.remove_short_time_entries()
   calculator.calculate_genset_savings()
