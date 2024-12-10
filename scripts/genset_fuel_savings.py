@@ -72,8 +72,8 @@ class CalculateGensetSavings:
     """Parse a time string into a datetime object."""
     return datetime.strptime(time_str, "%H:%M:%S")
 
-  def remove_close_time_entries(self) -> None:
-    """Filter out rows that are too close in time to the previous row, keeping only those that are spaced by at least 6 minutes from the CSV files."""
+  def remove_short_close_entries(self) -> None:
+    """Remove rows with 'Time Elapsed (minutes)' less than 1.1 and that are too close in time to the previous row by less than 6 minutes from the CSV files."""
     for month in self.months_list:
       file_path = Path(f"data/genset_savings_data/{self.config['year']}/{month}-Genset-Savings.csv")
       if not file_path.exists():
@@ -85,39 +85,21 @@ class CalculateGensetSavings:
         fieldnames = reader.fieldnames
         prev_time = None
         for row in reader:
-          current_time = self._parse_time(row["Time Initiated"])
-          if prev_time is not None:
-            time_diff = (current_time - prev_time).total_seconds() / 60
-            if time_diff >= 6:
-              filtered_data.append(row)
-          else:
-            filtered_data.append(row)
-          prev_time = current_time
+          try:
+            time_elapsed = float(row["Time Elapsed (minutes)"])
+            current_time = self._parse_time(row["Time Initiated"])
+            if time_elapsed >= 1.1:
+              if prev_time is None or (current_time - prev_time).total_seconds() / 60 >= 6:
+                filtered_data.append(row)
+                prev_time = current_time
+          except ValueError:
+            logging.warning(f"Invalid data in row: {row}. Skipping.")
+            continue
       with open(file_path, mode='w', newline='') as outfile:
         writer = csv.DictWriter(outfile, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(filtered_data)
-      logging.info(f"Removed rows with 'Time Initiated' - previous row's 'Time Initiated' < 6 minutes from {file_path}.")
-
-  def remove_short_time_entries(self) -> None:
-    """Remove rows with 'Time Elapsed (minutes)' less than 1.1 from the CSV files."""
-    for month in self.months_list:
-      file_path = Path(f"data/genset_savings_data/{self.config['year']}/{month}-Genset-Savings.csv")
-      if not file_path.exists():
-        logging.warning(f"{month}-Genset-Savings.csv does not exist.")
-        continue
-      filtered_data = []
-      with open(file_path, mode='r', newline='') as infile:
-        reader = csv.DictReader(infile)
-        fieldnames = reader.fieldnames
-        for row in reader:
-          if float(row["Time Elapsed (minutes)"]) >= 1.1:
-            filtered_data.append(row)
-      with open(file_path, mode='w', newline='') as outfile:
-        writer = csv.DictWriter(outfile, fieldnames=fieldnames)
-        writer.writeheader()
-        writer.writerows(filtered_data)
-      logging.info(f"Removed rows with 'Time Elapsed (minutes)' < 1.1 from {file_path}.")
+      logging.info(f"Filtered out short entries (< 1.1 minutes) and close entries (< 6 minutes) from {file_path}.")
 
   def load_yield_data(self, filename: str, yield_column: str) -> Dict[str, float]:
     """Load yield data from CSV file."""
@@ -213,7 +195,7 @@ class CalculateGensetSavings:
   def _calculate_savings(self, reader: List[List[str]], energy_saving_col_idx: int) -> Tuple[float, int]:
     """Calculate total kWh saved and number of outages."""
     total_kwh_saved = sum(float(row[energy_saving_col_idx]) for row in reader[1:] if row[energy_saving_col_idx])
-    num_outages = len([row for row in reader[1:] if row[energy_saving_col_idx]]) - 1
+    num_outages = len([row for row in reader[1:] if row[energy_saving_col_idx]])
     return total_kwh_saved, num_outages
 
   def _calculate_costs(self, total_kwh_saved: float, num_outages: int) -> Tuple[float, float, float]:
@@ -243,6 +225,7 @@ class CalculateGensetSavings:
     worksheet.write(len(reader) + 13, 1, self.grid_yield_data.get(month, 0))
     worksheet.write(len(reader) + 15, 0, "Genset Yield")
     worksheet.write(len(reader) + 15, 1, self.genset_yield_data.get(month, 0))
+    self._adjust_column_widths(worksheet, reader)
     logging.info(f"Calculated genset savings for {month}.")
 
   def _adjust_column_widths(self, worksheet: xlsxwriter.Workbook.worksheet_class, reader: List[List[str]]) -> None:
@@ -373,6 +356,5 @@ if __name__ == "__main__":
   calculator = CalculateGensetSavings(config_file)
   calculator.confirm_year_folder()
   calculator.clean_month_csv_files()
-  calculator.remove_short_time_entries()
-  calculator.remove_close_time_entries()
+  calculator.remove_short_close_entries()
   calculator.calculate_genset_savings()
