@@ -374,4 +374,5 @@ if __name__ == "__main__":
   calculator.confirm_year_folder()
   calculator.clean_month_csv_files()
   calculator.remove_short_time_entries()
+  calculator.remove_close_time_entries()
   calculator.calculate_genset_savings()
