@@ -24,11 +24,12 @@ This guide explains how to calculate fuel savings from genset operations using m
 - Remove previously calculated savings.
 - Remove empty rows from the CSV files.
 
-## Step 4: Remove Short Time Entries
+## Step 4: Remove Short and Close Time Entries
 
 1. **Filter Entries:**
 
-- Remove rows where 'Time Elapsed (minutes)' is less than 1 minute.
+- Remove rows where 'Time Elapsed (minutes)' is less than 1.1 minutes.
+- Remove rows where the time difference between consecutive entries is less than 6 minutes.
 
 ## Step 5: Load Yield Data
 
@@ -85,7 +86,9 @@ This guide explains how to calculate fuel savings from genset operations using m
 {
   "year": 2023,
   "site": "ExampleSite",
-  "cost_of_fuel_plus_maintenance": 1.25,
-  "cost_per_outage": 50.00
+  "genset_fuel": {
+    "cost_fuel_plus_MTCE": 1.25,
+    "cost_per_outage": 50.00
+  }
 }
 ```
